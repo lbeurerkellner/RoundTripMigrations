@@ -1,0 +1,46 @@
+import {MakeClassAbstract} from "Ex04_MakeClassAbstract/MakeClassAbstract";
+import {SubValue} from "Ex04_MakeClassAbstract/MakeClassAbstract";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * MakeClassAbstract
+ * 
+ * MakeClassAbstract#2 -> MakeClassAbstract#1 -> MakeClassAbstract#2
+ * 
+ * The class Value is declared abstract in version 2. Thus, all values of 
+ * type Value in version 1 have to be migrated to one of Value's concrete 
+ * sub-classes of version 2 (SubValue).
+ * 
+ * Make Class Abstract: unsafely model-migrating
+ * Drop Class Abstract: model-preserving
+ */
+@VersionAware
+export public class MakeClassAbstractSubValueTest extends FunctionContextRoundTripTest<MakeClassAbstract#1, MakeClassAbstract#2> {
+	
+	@Override
+	public instantiateOriginal() : MakeClassAbstract#1 {
+		let o1 = new MakeClassAbstract#1();
+	
+		o1.field = new SubValue#1()
+		o1.field.commonField = "commonValue1";
+		(o1.field as SubValue#1).field1 = "value1";
+		
+		return o1;
+	}
+	
+	
+	@Override
+	public assertMigratedInstance(migrated: MakeClassAbstract#2) {
+		Assert.isInstanceOf(migrated.field, SubValue#2, "The migrated 'field' is an instance of 'SubValue#2'.");
+		Assert.equal((migrated.field as SubValue#2).field1, "value1", "'field1' is migrated from the original version.");
+		Assert.equal((migrated.field as SubValue#2).commonField, "commonValue1", "'commonField' is migrated from the original version.");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: MakeClassAbstract#1) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(), 
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+}

@@ -1,0 +1,8 @@
+export public class CreateDeleteReference#1 {
+	
+}
+export public class CreateDeleteReference#2 {
+	public field1 : CreateDeleteReference
+	
+	constructor(@Spec spec : ~i~this) {}
+}

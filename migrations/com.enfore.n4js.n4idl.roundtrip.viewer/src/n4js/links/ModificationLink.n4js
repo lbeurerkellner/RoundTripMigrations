@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {Element} from "jointjs";
+import {Link} from "jointjs";
+
+/**
+ * A graph link that represents the modification of an object graph.
+ */
+export public class ModificationLink extends Link {
+	private const style = {
+		".marker-arrowheads": { display: "none" },
+		".link-tools": { display: "none", opacity: 0.0 },
+		'.marker-source': {
+			display: "none"
+		},
+		"text": {
+			"font-family": "Helvetica",
+			"font-size": 10
+		},
+		'.marker-target': {
+			fill: '#4b4a67',
+			stroke: '#4b4a67',
+			d: 'M 10 0 L 0 5 L 10 10 z'
+		},
+		'.connection': {
+			stroke: 'black',
+			'stroke-width': 1,
+			'stroke-dasharray': '5 2'
+		}
+	};
+	
+	constructor(from: Element, to: Element) {
+		super({
+			source: from,
+			target: to,
+			attrs: ModificationLink.style,
+			labels: [
+				{ position: 0.5, attrs: { text: { text: "modify"} } }
+			]
+		});
+	}	
+}

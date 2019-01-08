@@ -1,0 +1,59 @@
+import {AddSuperType} from "Ex05_AddSuperType/AddSuperType";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * AddSuperType
+ * 
+ * AddSuperType#2 -> AddSuperType#1 -> AddSuperType#2
+ * 
+ * In version to the super type 'SuperType' is added to the class 'AddSuperType'.
+ * The super type introduces new fields for which, when migrating back, default
+ * values have to be chosen.
+ * 
+ * Add Super Type: model-preserving
+ * Delete Super Type: unsafely model-migrating
+ */
+@VersionAware
+export public class AddSuperTypeTest extends AbstractRoundTripTest<AddSuperType#2, AddSuperType#1> {
+	
+	@Override
+	public instantiateOriginal() : AddSuperType#2 {
+		return new AddSuperType#2({
+			ownedField: "ownedValue", 
+			superField1: "superValue1", 
+			superField2: "superValue2"
+		});
+	}
+	
+	@Override
+	public migrate(o2 : AddSuperType#2) : AddSuperType#1 {
+		return new AddSuperType#1({
+			ownedField: o2.ownedField
+		});
+	}
+
+	@Override
+	public migrateBack(o1 : AddSuperType#1) : AddSuperType#2 {
+		return new AddSuperType#2({
+			ownedField: o1.ownedField, 
+			superField1: "defaultValue1", 
+			superField2: "defaultValue2"
+		});
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : AddSuperType#1) {
+		InstanceAssert.hasNoField("superField1", migrated, "Super field 'superField1' has been removed from the migrated instance.");
+		InstanceAssert.hasNoField("superField2", migrated, "Super field 'superField2' has been removed from the migrated instance.");
+		Assert.equal(migrated.ownedField, "ownedValue", "The field 'ownedField' of the migrated instance has the original value.");	
+	}
+	@Override
+	public assertRoundTripInstance(roundTrip : AddSuperType#2) {
+		Assert.equal(roundTrip.ownedField, "ownedValue", "Field 'ownedField' has the original value.");
+		Assert.equal(roundTrip.superField1, "defaultValue1", "Field 'superField1' was set to a default value.");
+		Assert.equal(roundTrip.superField2, "defaultValue2", "Field 'superField2' was set to a default value.");
+	}
+}
+	

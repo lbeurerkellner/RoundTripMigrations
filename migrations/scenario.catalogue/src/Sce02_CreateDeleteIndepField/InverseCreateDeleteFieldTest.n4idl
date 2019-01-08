@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {AddField} from "Sce02_CreateDeleteIndepField/AddField";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class CreateDeleteFieldTest extends FunctionContextRoundTripTest<AddField#2, AddField#1> {
+	
+	@Override
+	public instantiateOriginal() : AddField#2 {
+		let o1 = new AddField#2();
+		
+		o1.field1 = "value1";
+		o1.field2 = "value2";
+		
+		return o1;
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : AddField#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(), 
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : AddField#1) {
+		Assert.equal(migrated.field1, "value1", "Value of field1 is migrated correctly");
+		InstanceAssert.hasNoField("field2", migrated, "field2 is not present in the migrated instance");
+	}
+}

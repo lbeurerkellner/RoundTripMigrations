@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {FieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {GeneralizeFieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {SuperFieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {ModifyingFunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/ModifyingFunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/** 
+ * GeneralizeAttributeType#2 -> GeneralizeAttributeType#1 -> GeneralizeAttributeType#2
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeTypeModificationTest 
+	extends ModifyingFunctionContextRoundTripTest<GeneralizeFieldType#2, GeneralizeFieldType#1> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeFieldType#2 {
+		let o2 = new GeneralizeFieldType#2();
+	
+		o2.field = new SuperFieldType#2();
+		o2.field.generic = "genericValue";
+		
+		return o2;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : GeneralizeFieldType#1) {
+		// modify default value in migrated.field.specific
+		migrated.field.specific = "modified";
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeFieldType#2) {
+		Assert.equal(roundTrip.field.generic, "genericValue", "'field.generic' is retained in the round-trip instance.");
+		Assert.isInstanceOf(roundTrip.field, FieldType#2, "'field' has been implicitly changed to be of type AttributeType#2.");
+		Assert.equal((roundTrip.field as FieldType#2).specific, "modified", "'field.specific' reflects the modification of the migrated instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeFieldType#1) {
+		Assert.equal(migrated.field.specific, "defaultSpecificValue", "'field.specific' has been set to a default value.");
+		Assert.equal(migrated.field.generic, "genericValue", "'field.generic' of the migrated instance has the original value.");
+	}
+}

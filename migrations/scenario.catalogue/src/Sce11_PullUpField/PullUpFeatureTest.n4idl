@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {PullUpFeature} from "Sce11_PullUpField/PullUpFeature";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class PullUpFeatureSimpleModificationTest 
+	extends ModificationMappingTest<PullUpFeature#1, PullUpFeature#2> {
+
+	@Override
+	public instantiateOriginal() : PullUpFeature#1 {
+		const o1 = new PullUpFeature#1();
+		o1.f = "value";
+		return o1;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : PullUpFeature#2) {
+		migrated.f = "modified";
+	}
+	
+	@Override
+	public modifyOriginalInstance(original : PullUpFeature#1) {
+		original.f = "modified";
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : PullUpFeature#2) {
+		Assert.equal(migrated.f, "value", "The migrated 'f' has the original value.");
+	}
+}

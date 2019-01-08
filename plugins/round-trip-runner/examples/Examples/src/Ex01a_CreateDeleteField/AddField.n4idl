@@ -1,0 +1,12 @@
+export public class AddField#1 {
+	public field1 : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class AddField#2 {
+	public field1 : string
+	public field2 : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}

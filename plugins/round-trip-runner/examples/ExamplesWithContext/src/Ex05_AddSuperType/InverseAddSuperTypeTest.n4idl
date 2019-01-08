@@ -1,0 +1,31 @@
+import {AddSuperType} from "Ex05_AddSuperType/AddSuperType";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class InverseAddSuperTypeTest extends FunctionContextRoundTripTest<AddSuperType#2, AddSuperType#1> {
+	
+	@Override
+	public instantiateOriginal() : AddSuperType#2 {
+		let o2 = new AddSuperType#2();
+	
+		o2.ownedField = "ownedValue";
+		o2.superField1 = "superValue1";
+		o2.superField2 = "superValue2"; 
+		
+		return o2;
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : AddSuperType#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(),
+			"The serialisation of the round-trip matches the original serialisation.");		
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : AddSuperType#1) {
+		Assert.equal(migrated.ownedField, "ownedValue", "'ownedValue' of the migrated instance has the original value.");
+	}
+}

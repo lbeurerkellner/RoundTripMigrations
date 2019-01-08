@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+/**
+ * Central interface for executing round-trip scenarios.
+ * 
+ * @param T1 The type from which the roundtrip starts
+ * @param T2 The type which the roundtrip migration targets. 
+ */
+export public interface RoundTripMigration<T1, T2> {
+	
+	@CovariantConstructor
+	constructor();
+	
+	/**
+	 * Instantiates and initializes the original instance.
+	 */	
+	public instantiateOriginal() : T1
+	
+	/**
+	 * Migrates the given instance of type V1.
+	 */
+	public migrate(v1 : T1) : T2;
+	
+	/**
+	 * Migrates the given migrated instance of type V2 
+	 * back to type V1.
+	 */
+	public migrateBack(migratedInstance : T2) : T1;
+}

@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {MakeClassAbstract} from "Sce05_DeclareClassAbstract/MakeClassAbstract";
+import {SubValue} from "Sce05_DeclareClassAbstract/MakeClassAbstract";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse MakeClassAbstract.
+ * 
+ * MakeClassAbstract#1 -> MakeClassAbstract#2 -> MakeClassAbstract#1
+ * 
+ * In this case the initial concrete type of 'field' is Value1. 
+ * Thus, in the migrated instance, a default value is chosen for 'field2'.
+ * 
+ * Using traceability information, the migration can successfully restore the original
+ * type of 'field' in a round-trip migration.
+ * 
+ * Inverse round-trip of {@link MakeClassAbstractTest}.
+ */
+@VersionAware
+export public class InverseMakeClassAbstractTest extends FunctionContextRoundTripTest<MakeClassAbstract#2, MakeClassAbstract#1> {
+	
+	@Override
+	public instantiateOriginal() : MakeClassAbstract#2 {
+		let o1 = new MakeClassAbstract#2();
+	
+		o1.field = new SubValue#2();
+		o1.field.commonField = "commonValue";
+		(o1.field as SubValue#2).field1 = "value1";
+		
+		return o1;
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : MakeClassAbstract#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(),
+			"The serialisation of the round-trip matches the original serialisation.");		
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : MakeClassAbstract#1) {
+		Assert.isInstanceOf(migrated.field, SubValue#1, "The 'field' is an instance of SubValue1#1 in the migrated instance.")
+		Assert.equal(migrated.field.commonField, "commonValue", "The 'commonField' was retained in the migrated instance.");
+		Assert.equal((migrated.field as SubValue#1).field1, "value1", "'field1' has the original value in the migrated instance.");
+	}
+}

@@ -1,0 +1,31 @@
+{
+	"name": "org.eclipse.n4js.n4idl.runtime.testhelpers",
+	"description": "A (seedable) graph generator which allows to generate and visualise arbitrarily connected graphs.",
+	"main": "RandomGraphGenerator.js",
+	"private": true,
+	"n4js": {
+		"projectType": "library",
+		"vendorId": "org.eclipse.n4js",
+		"sources": {
+			"source": [
+				"src"
+			]
+		},
+		"output": "src-gen",
+		"requiredRuntimeLibraries": [
+			"n4js-runtime-es2015"
+		]
+	},
+	"dependencies": {
+		"cytoscape": "^3.2.11",
+		"cytoscape-dagre": "^2.2.0",
+		"org.eclipse.n4js.mangelhaft.assert": "0.1",
+		"n4js-node": "0.1",
+		"n4js-runtime-es2015": "0.1",
+		"org.eclipse.n4js.n4idl.runtime": "0.0.1"
+	},
+	"devDependencies": {
+		"webpack": "^4.2.0",
+		"webpack-cli": "^2.0.13"
+	}
+}

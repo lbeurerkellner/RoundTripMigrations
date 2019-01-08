@@ -1,0 +1,46 @@
+import {GeneralizeAttribute} from "Ex06a_GeneralizeAttributeType/GeneralizeAttribute";
+import {SuperAttributeType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttribute";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {GeneralizeAttributeTest} from "Ex06a_GeneralizeAttributeType/GeneralizeAttributeTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {AttributeType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttribute";
+
+/**
+ * Inverse GeneralizeAttribute: Specialize attribute.
+ * 
+ * GeneralizeAttribute#2 -> GeneralizeAttribute#1 -> GeneralizeAttribute#2
+ * 
+ * Inverse round-trip of {@link GeneralizeAttributeTest}.
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeTest extends InverseRoundTrip<GeneralizeAttribute#1, GeneralizeAttribute#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<GeneralizeAttribute#1, GeneralizeAttribute#2> {
+		return new GeneralizeAttributeTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttribute#2 {
+		return new GeneralizeAttribute#2({
+			field: new SuperAttributeType#2({
+				general: "generalValue",
+			})
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttribute#2) {
+		Assert.isInstanceOf(roundTrip.field, AttributeType#2, "The field 'field' was changed to an instance of class AttributeType");
+		Assert.equal((roundTrip.field as AttributeType#2).specific, "specificDefaultValue", "The field 'specific' was set to a default value.");
+		Assert.equal(roundTrip.field.general, "generalValue", "The field 'general' has the original value.");
+	}
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttribute#1) {
+		Assert.equal(migrated.field.specific, "specificDefaultValue", "The field 'specific' was set to a default value.");
+		Assert.equal(migrated.field.general, "generalValue", "The field 'general' has the original value in the migrated instance.");
+	}
+}

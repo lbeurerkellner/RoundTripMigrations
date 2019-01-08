@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {SerializedField} from "GraphModel";
+
+export public const InstanceUtils = {
+	/**
+	 * Returns a user-facing description of the given type name.
+	 *
+	 * @param {string} typeName
+	 */
+	displayTypeName: function(typeName : string) {
+		return typeName.replace("$", "#");
+	},
+	
+	/**
+	 * Returns a user-faced string that represents the
+	 * given value of the given type.
+	 *
+	 * @param {string} typename The name of the type of the value
+	 * @param {any} value The value
+	 */
+	getValueRepresentation: function(typename : string, value : any) {
+		if (typename == "string") {
+			return "\"" + value + "\"";
+		} else if (typename == "undefined") {
+			return "undefined";
+		} else if (typename == "Array") {
+			return "[" + (value as Array<Object>).map(v => v.toString()).join(", ") + "]"
+		} else {
+			return value;
+		}
+	},
+	
+	/**
+	 * Returns a user-faced string description of the given
+	 * instance field.
+	 *
+	 * @param {Field} f
+	 */
+	getFieldStringDescription: function (f : SerializedField) {
+		return "-" + f.fieldName + " : " + InstanceUtils.displayTypeName(f.type.name) + " = " + InstanceUtils.getValueRepresentation(f.type.name, f.value);
+	}
+}

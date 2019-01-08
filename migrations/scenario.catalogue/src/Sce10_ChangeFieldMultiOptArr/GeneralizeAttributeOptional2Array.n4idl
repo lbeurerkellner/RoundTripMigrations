@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import * as Migrations from "org/eclipse/n4js/n4idl/migrations/Migrations";
+
+// @section v1
+export public class GeneralizeAttributeOptional2Array#1 {
+	public field? : Element
+}
+export public class Element#1 {
+	public value : string
+}
+
+// @section v2
+export public class GeneralizeAttributeOptional2Array#2 {
+	public field : Array<Element>
+}
+export public class Element#2 {
+	public value : string
+}
+
+// @section migrations
+@Migration
+export function migrate(o1 : GeneralizeAttributeOptional2Array#1) : GeneralizeAttributeOptional2Array#2 {
+	// obtain previous revision
+	const previousRevision = context.getTrace(o1)[0] as GeneralizeAttributeOptional2Array#2 
+		|| {} as GeneralizeAttributeOptional2Array#2;
+
+	let o2 = new GeneralizeAttributeOptional2Array#2();
+
+	let elements : Array<Element#2> = [];
+	
+	// if o1.field is present
+	if (o1.field != null) {
+		// add migrated field value as first array element
+		elements.push(Migrations.copy(Element#2, o1.field));
+	}
+	
+	// add all previousRevision elements, but the first one
+	(previousRevision.field || []).slice(1)
+		.forEach(e => elements.push(Migrations.copy(Element#2, e)));
+
+	o2.field = elements;
+
+	return o2;
+}
+
+@Migration
+export function migrateBack(o2 : GeneralizeAttributeOptional2Array#2) : GeneralizeAttributeOptional2Array#1 {	
+	let o1 = new GeneralizeAttributeOptional2Array#1();
+	
+	// migrate the element at index 0, if not present set 'o1.field' to null
+	o1.field = Migrations.migrateElementAt(o2.field, 0, null);
+	
+	return o1;
+}
+// @endsection
+
+@Migration
+export function migrateElement(e1 : Element#1) : Element#2 {
+	const e2 = new Element#2();
+	e2.value = e1.value;
+	return e2;
+}
+
+@Migration
+export function migrateBackElement(e2 : Element#2) : Element#1 {
+	const e1 = new Element#1();
+	e1.value = e2.value;
+	return e1;
+}

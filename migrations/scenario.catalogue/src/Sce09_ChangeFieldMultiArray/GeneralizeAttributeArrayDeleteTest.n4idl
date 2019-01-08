@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {Element} from "Sce09_ChangeFieldMultiArray/GeneralizeAttributeArray";
+import {GeneralizeAttributeArray} from "Sce09_ChangeFieldMultiArray/GeneralizeAttributeArray";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class GeneralizeAttributeArrayTest extends 
+	ModificationMappingTest<GeneralizeAttributeArray#1, GeneralizeAttributeArray#2> {
+
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#1 {
+		let o1 = new GeneralizeAttributeArray#1();
+	
+		o1.field = new Element#1();
+		o1.field.value = "someValue";	
+		
+		return o1;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : GeneralizeAttributeArray#2) {
+		// remove the only element in 'field'
+		migrated.field.shift();
+	}
+
+	@Override
+	public modifyOriginalInstance(original : GeneralizeAttributeArray#1) {
+		// since removing is not possible, the value is set to a default value instead
+		original.field.value = "defaultValue";
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: GeneralizeAttributeArray#2) {
+		Assert.equal(migrated.field.length, 1, "The migrated 'field' has exactly one element.");
+		Assert.equal(migrated.field[0].value, "someValue", "The first element of the migrated 'field' has the original value.");
+	}
+}

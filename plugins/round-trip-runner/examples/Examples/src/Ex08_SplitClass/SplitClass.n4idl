@@ -1,0 +1,31 @@
+export public class Combined#1 {
+	public type : string
+	public stringValue : string
+	public intValue : int
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class IntValue#2 {
+	public intValue : int
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class StringValue#2 {
+	public stringValue : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class SplitClass#1 {
+	public field : Combined
+
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class SplitClass#2 {
+	public field : IntValue
+
+	constructor(@Spec spec : ~i~this) {}
+}

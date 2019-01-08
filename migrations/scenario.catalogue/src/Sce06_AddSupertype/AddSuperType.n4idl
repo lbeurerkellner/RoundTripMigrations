@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+// @section v1
+export public class AddSuperType#1 {
+	public ownedField : string
+}
+
+// @section v2
+export public class AddSuperType#2 
+	extends SuperType {
+	
+	public ownedField : string
+}
+
+export public class SuperType#2 {
+	public superField1 : string
+	public superField2 : string
+}
+
+// @section migrations
+@Migration
+export function migrate(o1 : AddSuperType#1) : AddSuperType#2 {
+	// obtain previous revision
+	const previousRevision = context.getTrace(o1)[0] as AddSuperType#2
+		|| {} as AddSuperType#2;
+
+	let o2 = new AddSuperType#2();
+
+	o2.ownedField = o1.ownedField;
+	o2.superField1 = previousRevision.superField1 || "defaultSuperValue1";
+	o2.superField2 = previousRevision.superField2 || "defaultSuperValue2";
+
+	return o2;
+}
+
+@Migration
+export function migrateBack(o2 : AddSuperType#2) : AddSuperType#1 {
+	let o1 = new AddSuperType#1();
+
+	o1.ownedField = o2.ownedField;
+	
+	return o1;
+}

@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {Combined} from "Sce12_SplitType/SplitClass";
+import {CombinedType} from "Sce12_SplitType/SplitClass";
+import {SplitClass} from "Sce12_SplitType/SplitClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class SplitClassStringTest 
+	extends FunctionContextRoundTripTest<SplitClass#1, SplitClass#2> {
+	@Override
+	public instantiateOriginal() : SplitClass#1 {
+		const sc = new SplitClass#1();
+		sc.f = new Combined#1();
+		sc.f.type = CombinedType#1.STRING;
+		sc.f.stringValue = "someValue";
+		return sc;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: SplitClass#2) {
+		Assert.equal(migrated.f.intValue, 12, "The migrated instance holds a default IntValue instance for 'f'.")
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: SplitClass#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip, "The round-trip instance deep-equals the original instance.");
+	}
+}

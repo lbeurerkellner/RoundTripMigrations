@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {FieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {GeneralizeFieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class GeneralizeAttributeTypeTest extends FunctionContextRoundTripTest<GeneralizeFieldType#1, GeneralizeFieldType#2> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeFieldType#1 {
+		let o1 = new GeneralizeFieldType#1();
+	
+		o1.field = new FieldType#1();
+		o1.field.generic = "genericValue";
+		o1.field.specific = "specificValue";	
+		
+		return o1;
+	}
+	
+	
+	@Override
+	public assertMigratedInstance(migrated: GeneralizeFieldType#2) {
+		Assert.isInstanceOf(migrated.field, FieldType#2, "The more specific type of 'field' is retained in the migrated instance.");
+		Assert.deepEqual(migrated.field, this.instantiateOriginal().field, "'field' is fully retained in the migrated instance.");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: GeneralizeFieldType#1) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(), 
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+}

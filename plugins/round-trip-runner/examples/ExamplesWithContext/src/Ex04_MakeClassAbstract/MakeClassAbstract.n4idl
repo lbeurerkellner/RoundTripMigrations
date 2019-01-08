@@ -1,0 +1,95 @@
+// @section v1
+export public class MakeClassAbstract#1 {
+	public field : Value
+}
+
+export public class Value#1 {
+	public commonField : string
+}
+
+export public class SubValue#1 extends Value {
+	public field1 : string
+}
+
+// @section v2
+export public class MakeClassAbstract#2 {
+	public field : Value
+}
+
+export public abstract class Value#2 {
+	public commonField : string
+}
+
+export public class SubValue#2 extends Value {
+	public field1 : string
+}
+
+// @section migrations
+@Migration
+export function migrateValue(o1 : Value#1) : Value#2 {
+	const previousRevision = context.getTrace(o1)[0] || {};
+	
+	const sv = new SubValue#2();
+	// obtain value of field1 from previous revision or choose a default
+	sv.field1 = (previousRevision as SubValue#2).field1 || "defaultValue";
+	sv.commonField = o1.commonField;
+	return sv;
+}
+
+@Migration
+export function migrateBackValue(o2 : SubValue#2) : Value#1 {
+	const previousRevision = context.getTrace(o2)[0] as Value#1
+		|| {} as Value#1;
+	
+	// If in a previous migration we were forced to migrate
+	// from Value to SubValue, and 'field1' has not been modified,
+	// migrate-back to Value
+	if (context.getTrace(o2).length > 0 
+		&& !(previousRevision instanceof SubValue#1)
+		&& !(context.isModified(o2, "field1"))) {
+		const v = new Value#1();
+		v.commonField = o2.commonField;
+		return v;
+	}
+	
+	// otherwise just migrate SubValue#2 to an instance of identical type SubValue#1
+	const sv = new SubValue#1();
+	sv.commonField = o2.commonField;
+	sv.field1 = o2.field1;
+	
+	return sv;
+}
+
+
+// @endsection
+
+@Migration
+export function migrateSubValue(o1 : SubValue#1) : SubValue#2 {
+	const sv = new SubValue#2();
+	sv.field1 = o1.field1;
+	sv.commonField = o1.commonField;
+	return sv;
+}
+
+@Migration
+export function migrateAbstractValue(v : Value#2) : Value#1 {
+	throw "Cannot migrate abstract class";
+}
+
+@Migration
+export function migrate(o1 : MakeClassAbstract#1) : MakeClassAbstract#2 {
+	let o2 = new MakeClassAbstract#2();
+
+	o2.field = migrate(o1.field); 
+
+	return o2;
+}
+
+@Migration
+export function migrateBack(o2 : MakeClassAbstract#2) : MakeClassAbstract#1 {
+	let o1 = new MakeClassAbstract#1();
+	
+	o1.field = migrate(o2.field)
+	
+	return o1;
+}

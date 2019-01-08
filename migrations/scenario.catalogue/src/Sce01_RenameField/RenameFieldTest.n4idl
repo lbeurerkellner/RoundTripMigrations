@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {RenameField} from "Sce01_RenameField/RenameField";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/** 
+ * In this case the support for traceability is not required,
+ * as the renaming is a refactoring that can be successfully round-trip
+ * migrated without any additional information. 
+ */
+@VersionAware
+export public class RenameFieldTest extends FunctionContextRoundTripTest<RenameField#1, RenameField#2> {
+	
+	@Override
+	public instantiateOriginal() : RenameField#1 {
+		let o1 = new RenameField#1();
+	
+		o1.field1 = "value1";
+		
+		return o1;
+	}
+	
+	
+	@Override
+	public assertMigratedInstance(migrated : RenameField#2) {
+		Assert.equal(migrated.field2, "value1", "The 'field2' in the migrated instance has the original value.");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : RenameField#1) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(), 
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+}

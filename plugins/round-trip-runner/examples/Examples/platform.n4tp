@@ -1,0 +1,19 @@
+{
+  "location" : [
+  {
+      "config" : { },
+      "repoType" : "npm",
+      "projects" : {
+        "request" : {
+          "version" : "@2.83.0"
+        },
+	"node-fetch": {
+    	  "version" : "@1.7.3"
+	},
+	"systemjs": {
+	  "version" : "@0.19.39"
+	}
+      }
+    }
+ ]
+}

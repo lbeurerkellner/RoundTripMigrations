@@ -1,0 +1,111 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {ExtractSubClass} from "Ex14_ExtractSubClass/ExtractSubClass";
+import {A} from "Ex14_ExtractSubClass/ExtractSubClass";
+import {SubA} from "Ex14_ExtractSubClass/ExtractSubClass";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+
+/**
+ * ExtractSubClass
+ * 
+ * ExtractSubClass#1 -> ExtractSubClass#2 -> ExtractSubClass#1
+ * 
+ * In version 2 the sub-class 'SubA' is extracted from A. As a consequence
+ * A#2 does not have the field 'specificField' anymore. Thus, on an instance level
+ * a migration has to decide whether an instance of A#1 is to be migrated to the
+ * more generic A#2 or the more specific SubA#2.
+ * 
+ * In case a reference requires a specific type, the migration may have to resort to 
+ * default values for 'specificField'.
+ * 
+ * Extract sub-class: safely model-migrating
+ * Inline sub-class: unsafely model-migrating
+ */
+@VersionAware
+export public class ExtractSubClassTest extends AbstractRoundTripTest<ExtractSubClass#1, ExtractSubClass#2> {
+		
+	const defaultSpecificFieldValue = "defaultSpecificField";
+		
+	@Override
+	public instantiateOriginal() : ExtractSubClass#1 {
+		return new ExtractSubClass#1({
+			f1: new A#1({
+				genericField: 1,
+				specificField: "initialSpecificField1"
+			}),
+			f2: new A#1({
+				genericField: 2,
+				specificField: "initialSpecificField2"
+			})
+		});
+	}
+	
+	@Override
+	public migrate(o1 : ExtractSubClass#1) : ExtractSubClass#2 {
+		return new ExtractSubClass#2({
+			f1: this.migrateA(o1.f1),
+			f2: this.migrateAToSubA(o1.f2)
+		});
+	}
+	
+	public migrateA(o1 : A#1) : A#2 {
+		return new A#2({
+			genericField: o1.genericField
+		});
+	}
+	
+	public migrateAToSubA(o1 : A#1) : SubA#2 {
+		// if all values for a valid instance of SubA#2 
+		// are present
+		if (undefined != o1.specificField) {
+			return new SubA#2({
+				genericField : o1.genericField,
+				specificField : o1.specificField
+			});
+		} else {
+			// otherwise use default value for specificField
+			return new SubA#2({
+				genericField : o1.genericField,
+				specificField : ExtractSubClassTest.defaultSpecificFieldValue
+			});
+		}
+	}
+
+	@Override
+	public migrateBack(o2 : ExtractSubClass#2) : ExtractSubClass#1 {
+		return new ExtractSubClass#1({
+			f1: this.migrateBackA(o2.f1),
+			f2: this.migrateBackA(o2.f2)
+		});
+	}
+	
+	public migrateBackA(o1 : A#2) : A#1 {
+		return new A#1({
+			genericField: o1.genericField,
+			specificField : 
+				// use default value if applicable
+				(o1 instanceof SubA#2) ? 
+					(o1 as SubA#2).specificField : 
+					ExtractSubClassTest.defaultSpecificFieldValue
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : ExtractSubClass#1) {
+		Assert.equal(roundTrip.f1.genericField, 1, "The original value of 'f1.genericField' was retained in the round-trip instance.");
+		Assert.equal(roundTrip.f1.specificField, "defaultSpecificField", "'f1.genericField' was set to a default value in the round-trip instance.");
+		
+		Assert.equal(roundTrip.f2.genericField, 2, "The original value of 'f2.genericField' was retained in the round-trip instance.");
+		Assert.equal(roundTrip.f2.specificField, "initialSpecificField2", "The original value of 'f2.specificField' was retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : ExtractSubClass#2) {
+		Assert.equal(migrated.f1.genericField, 1, "The original value of 'f1.genericField' was retained in the migrated instance.");
+		InstanceAssert.hasNoField("specificField", migrated.f1, "There is no more 'f2.specificField' in the migrated instance");
+		
+		Assert.equal(migrated.f2.genericField, 2, "The original value of 'f2.genericField' was retained in the migrated instance.");
+		Assert.equal(migrated.f2.specificField, "initialSpecificField2", "The original value of 'f2.specificField' was retained in the migrated instance.");
+	}
+}
+	

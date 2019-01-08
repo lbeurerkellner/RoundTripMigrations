@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+/** 
+ * A {@link SubGraphURI} may be used to address a sub-graph/instance in one 
+ * of the round-trip stages.
+ */
+export public class SubGraphURI {
+	/** The stage of this sub-graph URI. (e.g. roundTrip, migrated) */
+	public stage : string
+	/** The index in the object-graph registry. */
+	public stageId : int
+
+	@Override
+	public toString() : string {
+		return this.stage + "." + this.stageId;
+	}
+
+	public equals(uri : SubGraphURI) : boolean {
+		return uri.stage == this.stage && uri.stageId == this.stageId;
+	}
+	
+	/** Creates a new {@link SubGraphURI} for the given id and stage. */
+	static createURI(stage : string, stageId : int) : SubGraphURI {
+		const u = new SubGraphURI();
+		u.stage = stage;
+		u.stageId = stageId;
+		return u;
+	}
+}

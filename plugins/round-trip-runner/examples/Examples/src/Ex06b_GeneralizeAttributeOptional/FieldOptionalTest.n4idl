@@ -1,0 +1,56 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {FieldOptional} from "Ex06b_GeneralizeAttributeOptional/FieldOptional";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * FieldOptional
+ * 
+ * FieldOptional#1 -> FieldOptional#2 -> FieldOptional#1
+ * 
+ * In version 2 the field 'field' of class 'FieldOptional' is declared
+ * optional (multiplicity is changed from 1 to 0..1).
+ * 
+ * In the back-migration a default value is chosen, if the migrated instance
+ * does not have a value for the optional field.
+ * 
+ * Generalize (Relax) Field Multiplicity: model-preserving
+ * Specialize Field Multiplicity: unsafely model-preserving 
+ */
+@VersionAware
+export public class FieldOptionalTest extends AbstractRoundTripTest<FieldOptional#1, FieldOptional#2> {
+	
+	@Override
+	public instantiateOriginal() : FieldOptional#1 {
+		return new FieldOptional#1({
+			field: "value"
+		})
+	}
+	
+	@Override
+	public migrate(o1 : FieldOptional#1) : FieldOptional#2 {
+		return new FieldOptional#2({
+			field: o1.field
+		})
+	}
+
+	@Override
+	public migrateBack(o2 : FieldOptional#2) : FieldOptional#1 {
+		let value = o2.field;
+		if (value == undefined) {
+			value = "defaultValue";
+		}
+		return new FieldOptional#1({
+			field: value
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : FieldOptional#1) {
+		Assert.equal(roundTrip.field, "value", "The 'field' of the round-trip instance retained the original value.");	
+	}
+	@Override
+	public assertMigratedInstance(migrated : FieldOptional#2) {
+		Assert.equal(migrated.field, "value", "The 'field' of the migrated instance retained the original value.");
+	}
+}
+	

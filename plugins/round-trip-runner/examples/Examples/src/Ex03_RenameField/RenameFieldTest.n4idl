@@ -1,0 +1,43 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {RenameField} from "Ex03_RenameField/RenameField";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * RenameField
+ * 
+ * RenameField#2 -> RenameField#1 -> RenameField#2
+ * 
+ * The field 'field1' is renamed to 'field2' in version 2 of type RenameField.
+ * 
+ * Rename Field: safely model-migrating, refactoring
+ */
+@VersionAware
+export public class RenameFieldTest extends AbstractRoundTripTest<RenameField#2, RenameField#1> {
+	
+	@Override
+	public instantiateOriginal() : RenameField#2 {
+		return new RenameField#2({field2: "value1"});
+	}
+	
+	@Override
+	public migrate(o2 : RenameField#2) : RenameField#1 {
+		return new RenameField#1({field1: o2.field2});
+	}
+	@Override
+	public migrateBack(o1 : RenameField#1) : RenameField#2 {
+		return new RenameField#2({field2: o1.field1});
+	}
+	
+	@Override
+	public assertRoundTripInstance(migrated : RenameField#2) {
+		InstanceAssert.hasNoField("field1", migrated, "The migrated instance has no more field 'field1'.")
+		Assert.equal(migrated.field2, "value1", "Field 'field2' of the migrated instance has the original value.");
+	}
+	
+	@Override
+	public assertMigratedInstance(roundTrip : RenameField#1) {
+		InstanceAssert.hasNoField("field2", roundTrip, "The round-trip instance has no more field 'field1'.")
+		Assert.equal(roundTrip.field1, "value1", "Field 'field1' of the round-trip instance has the original value.");
+	}
+}

@@ -1,0 +1,26 @@
+import {ExtractClass} from "Ex15_ExtractClass/ExtractClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class ExtractClassTest 
+	extends FunctionContextRoundTripTest<ExtractClass#1, ExtractClass#2> {
+	
+	@Override
+	public instantiateOriginal() : ExtractClass#1 {
+		const ec = new ExtractClass#1();
+		ec.f = "someValue";
+		return ec;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: ExtractClass#2) {
+		Assert.equal(migrated.delegate.f, "someValue");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: ExtractClass#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

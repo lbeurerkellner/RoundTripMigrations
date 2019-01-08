@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+// @section v1
+export public class SuperSuperType#1 {
+	// no fields
+}
+
+export public class SuperType#1 extends SuperSuperType {
+	public superField : string
+}
+
+export public class SpecializeSuperType#1 
+	extends SuperSuperType {
+	// Inheriting all fields of SuperSuperType,
+	// therefore this type does not have 
+	// any fields in version 1.
+}
+
+// @section v2
+export public class SuperSuperType#2 {
+	// no fields
+}
+
+export public class SuperType#2 extends SuperSuperType {
+	public superField : string
+}
+
+export public class SpecializeSuperType#2 
+	extends SuperType {
+	// Inheriting all fields of HighestSuperType,
+	// therefore this type inherits field 'superField' 
+}
+
+// @section migrations
+@Migration
+function migrate(sst1 : SpecializeSuperType#1) : SpecializeSuperType#2 {
+	const sst2 = new SpecializeSuperType#2();
+	const previousRevision = context.getTrace(sst1)[0] as SpecializeSuperType#2;
+	
+	if (previousRevision) {
+		// re-use previous revision 'superField' value, if present
+		sst2.superField = previousRevision.superField;
+	} else {
+		// otherwise, choose a default value for 'superField'
+		sst2.superField = "defaultValue";
+	}
+	
+	return sst2;
+}
+
+@Migration
+function migrateBack(sst2 : SpecializeSuperType#2) : SpecializeSuperType#1 {
+	// empty type, nothing to migrate
+	return new SpecializeSuperType#1();
+}

@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+/**
+ * Generates a random graph using the given seed.
+ * 
+ * @param seed Numeric seed for the graph generation
+ * @param numNodes The number of nodes in the generated graph.
+ * @param nodeFactory Factory function to create new nodes.
+ */
+export external public function <NodeT> randomGraph(
+	seed : number, numNodes : int, maxOutgoingEdges : int,
+	nodeFactory: () => NodeT) : NodeT
+	
+/**
+ * A pseudo-random number generator.
+ */
+export external public class PseudoRandomNumberGenerator {
+	/**
+	 * Instantiates a new PRNG with the given seed.
+	 * 
+	 * If no seed is specified a random seed is chosen using {@code Math.random()}.
+	 */
+	public constructor(seed : number = Math.random())
+
+	/**
+	 * Generates a random number between the given upper and
+	 * lower bounds.
+	 * 
+	 * @param upper Excluded upper bound.
+	 * @param lower Included lower bound.
+	 */
+	public random(upper : number = 1, lower : number = 0) : number;
+	
+	/**
+	 * Generates a random integer between the given upper and
+	 * lower bounds.
+	 */
+	public randomInt(upper : number  = 1, lower : number = 0) : int;
+	
+	/**
+	 * Chooses a random element from the given array.
+	 */
+	public <T> choose(array : [T]) : T
+}
+	

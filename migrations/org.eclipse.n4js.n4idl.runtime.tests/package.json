@@ -1,0 +1,26 @@
+{
+	"name": "org.eclipse.n4js.n4idl.runtime.tests",
+	"version": "0.0.1",
+	"n4js": {
+		"projectType": "test",
+		"vendorId": "org.eclipse.n4js",
+		"sources": {
+			"test": [
+				"test",
+				"test-long"			
+			]
+		},
+		"output": "src-gen",
+		"requiredRuntimeLibraries": [
+			"n4js-runtime-es2015"
+		]
+	},
+	"dependencies": {
+		"n4js-runtime-es2015": "0.1",
+		"org.eclipse.n4js.mangelhaft": "0.1",
+		"org.eclipse.n4js.mangelhaft.assert": "0.1",
+		"org.eclipse.n4js.n4idl.runtime": "0.0.1",
+		"org.eclipse.n4js.n4idl.runtime.testhelpers": "0.0.1",
+		"com.enfore.n4js.n4idl.roundtrip": "0.0.1"
+	}
+}

@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {RoundTripModificationMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripModificationMigration";
+
+/**
+ * Abstract subclass of {@link ContextAwareRoundTripTest} that allows to
+ * provide migration functions in terms of fields.
+ */
+@VersionAware
+export public abstract class ModifyingFunctionContextRoundTripTest<T1 extends N4Object, T2 extends N4Object> 
+	extends FunctionContextRoundTripTest<T1, T2> 
+	implements RoundTripModificationMigration<T1, T2> {}

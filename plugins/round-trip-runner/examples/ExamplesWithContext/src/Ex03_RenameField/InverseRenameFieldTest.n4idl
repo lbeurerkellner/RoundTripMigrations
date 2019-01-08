@@ -1,0 +1,29 @@
+import {RenameField} from "Ex03_RenameField/RenameField";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class InverseRenameFieldTest extends FunctionContextRoundTripTest<RenameField#2, RenameField#1> {
+	
+	@Override
+	public instantiateOriginal() : RenameField#2 {
+		let o1 = new RenameField#2();
+	
+		o1.field2 = "value2";
+		
+		return o1;
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : RenameField#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(), 
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : RenameField#1) {
+		Assert.equal(migrated.field1, "value2", "The 'field2' of the migrated instance has the original value.");
+	}
+}

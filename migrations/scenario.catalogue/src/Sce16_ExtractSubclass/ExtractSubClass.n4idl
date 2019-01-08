@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+// @section v1
+export public class A#1 {
+	public specificField : string
+	public genericField : string
+}
+
+export public class ExtractSubClass#1 {
+	public f1 : A
+}
+
+// @section v2
+export public class A#2 {
+	public genericField : string
+}
+
+export public class SubA#2 extends A {
+	public specificField : string
+}
+
+export public class ExtractSubClass#2 {
+	public f1 : A
+}
+
+// @section migration
+@Migration
+function migrateA(a : A#1) : A#2 {
+	const previousRevision = context.getTrace(a)[0] as A#2;
+	
+	let a2 : A#2;
+	
+	// if previous revision exists, is of type SubA... 
+	if (previousRevision instanceof SubA#2 ||
+		// ..or 'specificField' has been modified
+		context.isModified(a, "specificField")) {
+		
+		// migrate-back to an instance of SubA 
+		a2 = new SubA#2();
+		(a2 as SubA#2).specificField = a.specificField;
+	} else {
+		// otherwise migrate-back to A
+		a2 = new A#2();
+	}
+
+	// copy over value of 'genericField'
+	a2.genericField = a.genericField;
+	
+	return a2;
+}
+
+@Migration
+function migrateBackA(a : A#2) : A#1 {
+	const a1 = new A#1();
+	
+	a1.genericField = a.genericField;
+	// use default value for missing field 'specificField'
+	a1.specificField = "defaultValue";
+	
+	return a1;
+}
+
+@Migration
+function migrateBackSubA(a : SubA#2) : A#1 {
+	const a1 = new A#1();
+	
+	a1.genericField = a.genericField;
+	a1.specificField = a.specificField;
+	
+	return a1;
+}
+// @endsection
+
+@Migration
+function migrateExtractSubClass(e : ExtractSubClass#1) : ExtractSubClass#2 {
+	const es = new ExtractSubClass#2();
+	es.f1 = migrate(e.f1);
+	return es;
+}
+
+@Migration
+function migrateBackExtractSubClass(e : ExtractSubClass#2) : ExtractSubClass#1 {
+	const es = new ExtractSubClass#1();
+	es.f1 = migrate(e.f1);
+	return es;
+}

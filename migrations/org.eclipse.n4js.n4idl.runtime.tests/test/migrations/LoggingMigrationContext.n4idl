@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {MigrationControllerImpl} from "org/eclipse/n4js/n4idl/controller/MigrationController";
+import {MigrationResolver} from "org/eclipse/n4js/n4idl/resolution/MigrationResolver";
+import {MigrationContextImpl} from "org/eclipse/n4js/n4idl/context/MigrationContextImpl";
+/** 
+ * A logging migration context which logs the name of the all executed migrations. 
+ */
+@VersionAware
+export public class LoggingMigrationController extends MigrationControllerImpl {
+	/**
+	 * Log which holds a list of all resolved migrations in order of calls to #migrate.
+	 */
+	public log : [Function+] = []
+	
+	/** 
+	 * Instantiates a new {@link LoggingMigrationController} which migrates instances to the 
+	 * given model version.
+	 */
+	public constructor(targetVersion : int, context : MigrationContextImpl = undefined) {
+		super(new MigrationResolver(targetVersion));
+	}
+	
+	@Override
+	public <TargetType extends Object> migrateWith(migration : Function, args : [?]) : TargetType {
+		this.log.push(migration);
+		return super.migrateWith(migration, args);
+	}
+}

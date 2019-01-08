@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {FieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {GeneralizeFieldType} from "Sce07_GeneralizeFieldType/GeneralizeAttributeType";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/** 
+ * GeneralizeAttributeType#2 -> GeneralizeAttributeType#1 -> GeneralizeAttributeType#2
+ * 
+ * The type of field 'field' is generalized in its type (changes from AttributeType#1 to SuperAttributeType#2).
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeTypeAttrTest 
+	extends FunctionContextRoundTripTest<GeneralizeFieldType#2, GeneralizeFieldType#1> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeFieldType#2 {
+		let o2 = new GeneralizeFieldType#2();
+	
+		o2.field = new FieldType#2();
+		o2.field.generic = "genericValue";
+		(o2.field as FieldType#2).specific = "specificValue";
+		
+		return o2;
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeFieldType#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(),
+			"The serialisation of the round-trip matches the original serialisation.");
+		Assert.equal(roundTrip.field.generic, "genericValue", "'field.generic' is retained in the round-trip instance.");
+		Assert.isInstanceOf(roundTrip.field, FieldType#2, "'field' has been implicitly migrated to an instance of AttributeType#2.");
+		Assert.equal((roundTrip.field as FieldType#2).specific, "specificValue", "'field.specific' is retained in the round-trip migration.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeFieldType#1) {
+		Assert.equal(migrated.field.specific, "specificValue", "'field.specific' of the migrated instance has the original value.");
+		Assert.equal(migrated.field.generic, "genericValue", "'field.generic' of the migrated instance has the original value.");
+	}
+}

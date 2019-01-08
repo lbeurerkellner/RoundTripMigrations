@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {AddSuperType} from "Sce06_AddSupertype/AddSuperType";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class InverseAddSuperTypeTest extends FunctionContextRoundTripTest<AddSuperType#2, AddSuperType#1> {
+	
+	@Override
+	public instantiateOriginal() : AddSuperType#2 {
+		let o2 = new AddSuperType#2();
+	
+		o2.ownedField = "ownedValue";
+		o2.superField1 = "superValue1";
+		o2.superField2 = "superValue2"; 
+		
+		return o2;
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : AddSuperType#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(),
+			"The serialisation of the round-trip matches the original serialisation.");		
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : AddSuperType#1) {
+		Assert.equal(migrated.ownedField, "ownedValue", "'ownedValue' of the migrated instance has the original value.");
+	}
+}

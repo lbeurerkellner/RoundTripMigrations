@@ -1,0 +1,1 @@
+alias make-roundtrip-example=$(pwd)/template.py

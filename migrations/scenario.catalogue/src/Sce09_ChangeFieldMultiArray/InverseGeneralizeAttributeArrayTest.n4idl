@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {Element} from "Sce09_ChangeFieldMultiArray/GeneralizeAttributeArray";
+import {GeneralizeAttributeArray} from "Sce09_ChangeFieldMultiArray/GeneralizeAttributeArray";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class InverseGeneralizeAttributeArrayTest 
+	extends ModificationMappingTest<GeneralizeAttributeArray#2, GeneralizeAttributeArray#1> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#2 {
+		let o2 = new GeneralizeAttributeArray#2();
+	
+		const element : (string) => Element#2 = (value) => {
+			let e = new Element#2();
+			e.value = value;
+			return e;
+		}
+	
+		o2.field = [
+			element("value1"),
+			element("value2"),
+		]	
+		
+		return o2;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : GeneralizeAttributeArray#1) {
+		migrated.field.value = "modified";
+	}
+	
+	@Override
+	public modifyOriginalInstance(original : GeneralizeAttributeArray#2) {
+		original.field[0].value = "modified";
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeArray#1) {
+		Assert.equal(migrated.field.value, "value1", "The migrated 'field' has the original value of 'field[0]'.");
+	}
+}

@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+
+// @section v1
+export public class RenameField#1 {
+	field1 : string
+}
+
+// @section v2
+export public class RenameField#2 {
+	field2 : string
+}
+
+// @section migrations
+@Migration
+export function migrate(o1 : RenameField#1) : RenameField#2 {
+	let o2 = new RenameField#2();
+
+	// renamed field
+	o2.field2 = o1.field1;
+
+	return o2;
+}
+
+@Migration
+export function migrateBack(o2 : RenameField#2) : RenameField#1 {
+	let o1 = new RenameField#1();
+
+	// undo field renaming
+	o1.field1 = o2.field2;
+	
+	return o1;
+}

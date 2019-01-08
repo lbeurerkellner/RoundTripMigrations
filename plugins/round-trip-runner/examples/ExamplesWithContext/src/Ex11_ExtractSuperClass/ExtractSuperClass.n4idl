@@ -1,0 +1,58 @@
+import {copy} from "org/eclipse/n4js/n4idl/migrations/Migrations";
+
+// @section v1
+export public class ExtractSuperClass#1 {
+	public specificField : string
+	public genericField : string
+}
+
+// @section v2
+export public class SuperClass#2 {
+	public genericField : string
+}
+
+export public class ExtractSuperClass#2 extends SuperClass {
+	public specificField : string
+}
+
+// @section migrations
+@Migration
+function migrate(e1 : ExtractSuperClass#1) : SuperClass#2 {
+	const previousRevision = context.getTrace(e1)[0] as SuperClass#2;
+	
+	// if a previous revision can be obtained
+	if (previousRevision &&
+		// and e1 has originally been an instance of SuperClass ... 
+		(previousRevision instanceof SuperClass#2) &&
+		!(previousRevision instanceof ExtractSuperClass#2) &&
+		// and e1.specificField has not been modified (is default)
+		!(context.isModified(e1, "specificField"))) {
+		
+		// ... migrate back to a SuperClass instance
+		const s = new SuperClass#2();
+		s.genericField = e1.genericField;
+		return s;
+	} 
+	
+	// otherwise copy all values over to a new instance 
+	// of type ExtractSuperClass#2
+	return copy(ExtractSuperClass#2, e1);
+}
+
+@Migration
+function migrateBack(e2 : ExtractSuperClass#2) : ExtractSuperClass#1 {
+	// copy all values over to new instance of type ExtractSuperClass#1
+	return copy(ExtractSuperClass#1, e2);
+}
+
+@Migration
+function migrateSuperClass(s : SuperClass#2) : ExtractSuperClass#1 {
+	// migrate instances of SuperClass#2 back to ExtractSuperClass#1
+	// as there is no other means to represent them in model version 1 
+	const e = new ExtractSuperClass#1();
+	
+	e.genericField = s.genericField;
+	e.specificField = "defaultValue";
+	
+	return e;
+}

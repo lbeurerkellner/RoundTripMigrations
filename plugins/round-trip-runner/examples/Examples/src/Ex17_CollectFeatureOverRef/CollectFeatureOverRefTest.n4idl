@@ -1,0 +1,76 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {
+	CollectFeatureOverRef,
+	SourceClass
+} from "Ex17_CollectFeatureOverRef/CollectFeatureOverRef";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * CollectFeatureOverRef
+ * 
+ * CollectFeatureOverRef#1 -> CollectFeatureOverRef#2 -> CollectFeatureOverRef#1
+ * 
+ * The field 'field' of 'SourceClass#1' is collected over the reference 'reference' into the
+ * class 'CollectFeatureOverRef#2'. The field 'field' is a mandatory field, but the reference to 'SourceClass#1' in 
+ * 'CollectFeatureOverRef#1' is optional. When collecting the field, the multiplicity of the reference is 
+ * assumed. This results in an optional 'field' in class 'CollectFeatureOverRef#2'. 
+ */
+@VersionAware
+export public class CollectFeatureOverRefTest extends AbstractRoundTripTest<CollectFeatureOverRef#1, CollectFeatureOverRef#2> {
+	
+	@Override
+	public instantiateOriginal() : CollectFeatureOverRef#1 {
+		return new CollectFeatureOverRef#1({
+			reference: new SourceClass#1({
+				field: "someValue",
+				someOtherField: "someOtherValue"
+			})
+		});
+	}
+	
+	@Override
+	public migrate(o1 : CollectFeatureOverRef#1) : CollectFeatureOverRef#2 {
+		return new CollectFeatureOverRef#2({
+			// only create a migrated SourceClass#2 if optional field o1.reference has something to migrate
+			reference: o1.reference != undefined ? new SourceClass#2({
+				someOtherField: o1.reference.someOtherField
+			}) : undefined,
+			field: o1.reference != undefined ? o1.reference.field : undefined
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : CollectFeatureOverRef#2) : CollectFeatureOverRef#1 {
+		// do not create a SourceClass instance, if there are no non-default values
+		// to populate it with
+		if (o2.field == undefined && o2.reference == undefined) {
+			return new CollectFeatureOverRef#1({
+				reference: undefined
+			});
+		}
+		
+		return new CollectFeatureOverRef#1({
+			// initialize 
+			reference: new SourceClass#1({
+					field:  o2.field != undefined ? o2.field : "defaultValue",
+					someOtherField : o2.reference != undefined ? 
+						o2.reference.someOtherField : "otherDefaultValue"
+				})
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : CollectFeatureOverRef#1) {
+		Assert.isNotUndefined(roundTrip.reference, "The round-trip instance has a value for optional field 'reference'.");
+		Assert.equal(roundTrip.reference.field, "someValue", "The round-trip instance retains the original value of 'reference.field'.");
+		Assert.equal(roundTrip.reference.someOtherField, "someOtherValue", "The round-trip instance retains the original value of 'reference.someOtherField'.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : CollectFeatureOverRef#2) {
+		Assert.isNotUndefined(migrated.reference, "The migrated instance retains the value of field 'reference'.");
+		Assert.equal(migrated.reference.someOtherField, "someOtherValue", "The migrated instance reatins the value of field 'reference.someOtherField'.");
+		Assert.equal(migrated.field, "someValue", "The migrated instance retains the value of the collected field 'field'.");
+	}
+}
+	

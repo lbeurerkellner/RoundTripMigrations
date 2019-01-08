@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {Field} from "com/enfore/n4js/n4idl/objectgraph/Field";
+
+export public class Instance {
+	@Final
+	public className : string
+	private fields : Array<Field> = [];
+	
+	constructor(name : string) {
+		this.className = name;
+	}
+	
+	/** 
+	 * Returns all fields of this instance. 
+	 */
+	public getFields() : Array<Field> {
+		return this.fields;
+	}
+	
+	/**
+	 * Adds a new field to the instance.
+	 */
+	public addField(field : Field) {
+		this.fields.push(field);
+	}
+	
+}

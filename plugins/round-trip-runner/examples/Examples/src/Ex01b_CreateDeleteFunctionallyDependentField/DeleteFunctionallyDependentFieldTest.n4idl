@@ -1,0 +1,59 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {Person} from "Ex01b_CreateDeleteFunctionallyDependentField/DeleteFunctionallyDependentField";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+
+/**
+ * DeleteFunctionalDependentField
+ * 
+ * Person#1 -> Person#2 -> Person#1
+ * 
+ * In version 1 the class 'Person' has a functionally dependent field 'age'
+ * that can be computed based on the field 'yearOfBirth'.
+ * In version 2 this redundancy is removed by converting age to a getter.
+ * 
+ * When migrating back, the value of Person#2.age is computed using the 
+ * value of field yearOfBirth.
+ * 
+ */
+@VersionAware
+export public class DeleteFunctionalDependentFieldTest extends AbstractRoundTripTest<Person#1, Person#2> {
+	
+	@Override
+	public instantiateOriginal() : Person#1 {
+		return new Person#1({
+			age: 28,
+			yearOfBirth: 1990
+		});
+	}
+	
+	@Override
+	public migrate(o1 : Person#1) : Person#2 {
+		return new Person#2({
+			yearOfBirth: o1.yearOfBirth
+		})
+	}
+
+	@Override
+	public migrateBack(o2 : Person#2) : Person#1 {
+		return new Person#1({
+			age: o2.age,
+			yearOfBirth: o2.yearOfBirth
+		});
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : Person#2) {
+		Assert.equal(migrated.yearOfBirth, 1990, "roundTrip.yearOfBirth has the initial value");
+		InstanceAssert.hasNoField("age", migrated, "age is not present in the migrated instance");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : Person#1) {
+		Assert.equal(roundTrip.age, 28, "roundTrip.age has the initial value");
+		Assert.equal(roundTrip.yearOfBirth, 1990, "roundTrip.year has the initial value");
+		
+		InstanceAssert.hasField("age", roundTrip, "age is present in the round-trip instance");
+	}
+}
+	

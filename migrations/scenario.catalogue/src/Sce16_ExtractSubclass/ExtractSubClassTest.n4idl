@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {A} from "Sce16_ExtractSubclass/ExtractSubClass";
+import {ExtractSubClass} from "Sce16_ExtractSubclass/ExtractSubClass";
+import {SubA} from "Sce16_ExtractSubclass/ExtractSubClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class ExtractSubClassTest 
+	extends FunctionContextRoundTripTest<ExtractSubClass#1, ExtractSubClass#2> {
+	
+	@Override
+	public instantiateOriginal() : ExtractSubClass#1 {
+		const es = new ExtractSubClass#1();
+		es.f1 = new A#1();
+		es.f1.genericField = "genericValue1";
+		es.f1.specificField = "specificValue1";
+		
+		return es;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: ExtractSubClass#2) {
+		Assert.equal(migrated.f1.genericField, "genericValue1");
+		Assert.isInstanceOf(migrated.f1, SubA#2);
+		Assert.equal((migrated.f1 as SubA#2).specificField, "specificValue1");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: ExtractSubClass#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

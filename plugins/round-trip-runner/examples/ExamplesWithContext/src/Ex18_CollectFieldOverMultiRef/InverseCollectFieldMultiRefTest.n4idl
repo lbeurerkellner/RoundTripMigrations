@@ -1,0 +1,45 @@
+import {CollectFieldMultiRef} from "Ex18_CollectFieldOverMultiRef/CollectFieldOverMultiRef";
+import {Element} from "Ex18_CollectFieldOverMultiRef/CollectFieldOverMultiRef";
+import {SourceClass} from "Ex18_CollectFieldOverMultiRef/CollectFieldOverMultiRef";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+
+
+@VersionAware
+export public class InverseCollectFieldMultiRefTest 
+	extends FunctionContextRoundTripTest<CollectFieldMultiRef#2, CollectFieldMultiRef#1> {
+	
+	@Override
+	public instantiateOriginal() : CollectFieldMultiRef#2 {
+		const cf = new CollectFieldMultiRef#2();
+		
+		const sc1 = new SourceClass#2();
+		const sc2 = new SourceClass#2();
+		
+		sc1.uncollectedField = "uncollectedValue1";
+		sc2.uncollectedField = "uncollectedValue2";
+		
+		cf.references = [sc1, sc2];
+		
+		const e1 = new Element#2();
+		e1.value = "value1";
+		const e2 = new Element#2();
+		e2.value = "value2";
+		
+		cf.fieldValues = [e1, e2];
+		
+		return cf;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: CollectFieldMultiRef#1) {
+		// TODO
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: CollectFieldMultiRef#2) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

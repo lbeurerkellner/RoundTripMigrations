@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {GeneralizeAttributeOptional} from "Sce08_ChangeFieldMultiOptional/GeneralizeAttributeOptional";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * GeneralizeAttributeOptional#2 -> GeneralizeAttributeOptional#1 -> GeneralizeAttributeOptional#2
+ * 
+ * In this scenario, the multiplicity of 'field' is generalised from 1 to 0..1.
+ * 
+ * As a consequence, the migration has to choose a default-value when
+ * downgrading to #1. Since default values cannot be detected / modifications 
+ * cannot be detected, the upgrade migration is unable to determine
+ * whether 'field' has a default value or an explicitly set value.
+ * 
+ * Thus, the round-trip cannote be executed successfully (cf. #assertRoundTripInstance). 
+ * 
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeOptionalTest extends FunctionContextRoundTripTest<GeneralizeAttributeOptional#2, GeneralizeAttributeOptional#1> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeOptional#2 {
+		let o2 = new GeneralizeAttributeOptional#2();
+	
+		// set optional field to 'absent'
+		o2.field = undefined;	
+		
+		return o2;
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeOptional#2) {
+		InstanceAssert.equalSerialisation(roundTrip, this.instantiateOriginal(),
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeOptional#1) {
+		Assert.equal(migrated.field, "defaultValue", "'field' has been set to a default value.");
+	}
+}

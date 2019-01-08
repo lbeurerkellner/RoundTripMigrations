@@ -1,0 +1,51 @@
+import {Element} from "Ex06d_GeneralizeAttributeOptional2Array/GeneralizeAttributeOptional2Array";
+import {GeneralizeAttributeOptional2Array} from "Ex06d_GeneralizeAttributeOptional2Array/GeneralizeAttributeOptional2Array";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/** 
+ * #2 -> #1 -> #2
+ * 
+ * The 'field' in #1 is set to an absent value. As a consequence,
+ * the first element of 'field' in #2 is expected to be removed in 
+ * a round-trip migration. 
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeOptional2ArrayTest extends 
+	ModificationMappingTest<GeneralizeAttributeOptional2Array#2, GeneralizeAttributeOptional2Array#1> {
+
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeOptional2Array#2 {
+		let o2 = new GeneralizeAttributeOptional2Array#2();
+	
+		const element = (value : string) : Element#2 => {
+			let e = new Element#2();
+			e.value = value;
+			return e;
+		}
+	
+		o2.field = [
+			element("value1"),
+			element("value2")
+		];
+		
+		return o2;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : GeneralizeAttributeOptional2Array#1) {
+		// set the field to an absent value
+		migrated.field = null;
+	}
+
+	@Override
+	public modifyOriginalInstance(original : GeneralizeAttributeOptional2Array#2) {
+		// remove the first element
+		original.field.shift();
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: GeneralizeAttributeOptional2Array#1) {
+		Assert.equal(migrated.field.value, "value1", "The first element of 'field' was migrated to be the value of 'field' in #1.")
+	}
+}

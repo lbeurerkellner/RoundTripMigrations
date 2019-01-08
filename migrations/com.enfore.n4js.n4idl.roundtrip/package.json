@@ -1,0 +1,25 @@
+{
+	"name": "com.enfore.n4js.n4idl.roundtrip",
+	"version": "0.0.1",
+	"n4js": {
+		"projectType": "library",
+		"vendorId": "com.enfore",
+		"sources": {
+			"source": [
+				"src"
+			]
+		},
+		"output": "src-gen",
+		"requiredRuntimeLibraries": [
+			"n4js-runtime-es2015",
+			"n4js-runtime-esnext"
+		]
+	},
+	"dependencies": {
+		"n4js-runtime-es2015": "0.1",
+		"n4js-runtime-esnext": "0.1",
+		"org.eclipse.n4js.mangelhaft.assert": "0.1",
+		"org.eclipse.n4js.n4idl.runtime": "0.0.1",
+		"request": "2"
+	}
+}

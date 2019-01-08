@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {FoldSuperClass} from "Sce15_FoldSuperclass/FoldSuperClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class FoldSuperClassTest 
+	extends FunctionContextRoundTripTest<FoldSuperClass#1, FoldSuperClass#2> {
+	
+	@Override
+	public instantiateOriginal() : FoldSuperClass#1 {
+		const fs = new FoldSuperClass#1();
+		fs.f1 = "value1";
+		fs.f2 = "value2";
+		return fs;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: FoldSuperClass#2) {
+		Assert.equal(migrated.f1, "value1");
+		Assert.equal(migrated.f2, "value2");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: FoldSuperClass#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

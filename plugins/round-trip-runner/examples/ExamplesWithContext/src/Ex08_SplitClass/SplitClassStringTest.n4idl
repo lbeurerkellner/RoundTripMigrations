@@ -1,0 +1,29 @@
+import {Combined} from "Ex08_SplitClass/SplitClass";
+import {CombinedType} from "Ex08_SplitClass/SplitClass";
+import {SplitClass} from "Ex08_SplitClass/SplitClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class SplitClassStringTest 
+	extends FunctionContextRoundTripTest<SplitClass#1, SplitClass#2> {
+	@Override
+	public instantiateOriginal() : SplitClass#1 {
+		const sc = new SplitClass#1();
+		sc.f = new Combined#1();
+		sc.f.type = CombinedType#1.STRING;
+		sc.f.stringValue = "someValue";
+		return sc;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: SplitClass#2) {
+		Assert.equal(migrated.f.intValue, 12, "The migrated instance holds a default IntValue instance for 'f'.")
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: SplitClass#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip, "The round-trip instance deep-equals the original instance.");
+	}
+}

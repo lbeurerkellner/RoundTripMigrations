@@ -1,0 +1,66 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {ExtractSuperClass} from "Ex11_ExtractSuperClass/ExtractSuperClass";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * ExtractSuperClass
+ * 
+ * ExtractSuperClass#1 -> ExtractSuperClass#2 -> ExtractSuperClass#1
+ * 
+ * In version 2 a new non-abstract super class is extracted from class ExtractSuperClass.
+ * The field superField is pushed up into the super class.
+ * 
+ * Migrations are basically identity functions besides the fact of change in type versions.
+ * 
+ * Although the migration functions are close to identity functions, this metamodel
+ * change is not to be classified as a refactoring. Since the new super-class is not
+ * abstract, instances of it could be created in version 2 for which there do not exist
+ * any counterparts in version 2 (hence the 'unsafely model-migrating'-property of 'Inline Super Class').
+ * 
+ * However, this example does not have to provide migrations for this case, as there is no direct 
+ * reference to the new super-class anywhere in the metamodel (assuming ExtractSuperClass as the root
+ * of the object graph).
+ * 
+ * Extract Super Class: model-preserving
+ * Inline Super Class: unsafely model-migrating
+ */
+@VersionAware
+export public class ExtractSuperClassTest extends AbstractRoundTripTest<ExtractSuperClass#1, ExtractSuperClass#2> {
+	
+	@Override
+	public instantiateOriginal() : ExtractSuperClass#1 {
+		return new ExtractSuperClass#1({
+			specificField: "specificFieldValue",
+			genericField: "genericFieldValue"
+		});
+	}
+	
+	@Override
+	public migrate(o1 : ExtractSuperClass#1) : ExtractSuperClass#2 {
+		return new ExtractSuperClass#2({
+			specificField: o1.specificField,
+			genericField: o1.genericField
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : ExtractSuperClass#2) : ExtractSuperClass#1 {
+		return new ExtractSuperClass#1({
+			specificField: o2.specificField,
+			genericField: o2.genericField
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : ExtractSuperClass#1) {
+		Assert.equal(roundTrip.specificField, "specificFieldValue", "The original value of 'specificField' was retained in the round-trip instance.");
+		Assert.equal(roundTrip.genericField, "genericFieldValue", "The original value of 'genericField' was retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : ExtractSuperClass#2) {
+		Assert.equal(migrated.specificField, "specificFieldValue", "The original value of 'specificField' was retained in the migrated instance.");
+		Assert.equal(migrated.genericField, "genericFieldValue", "The original value of 'genericField' was retained in the migrated instance.");
+	}
+}
+	

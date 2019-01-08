@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {SplitFields} from "Sce21_SplitFields/SplitFields";
+import {X} from "Sce21_SplitFields/SplitFields";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class SplitFieldsTest 
+	extends FunctionContextRoundTripTest<SplitFields#1, SplitFields#2> {
+	
+	@Override
+	public instantiateOriginal() : SplitFields#1 {
+		const sf = new SplitFields#1();
+		sf.x = new X#1();
+		
+		sf.x.a = "valueA";
+		sf.x.b = "valueB";
+		
+		return sf;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: SplitFields#2) {
+		Assert.equal(migrated.y.a, "valueA");
+		Assert.equal(migrated.z.b, "valueB");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: SplitFields#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

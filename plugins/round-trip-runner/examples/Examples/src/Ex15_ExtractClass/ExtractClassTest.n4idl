@@ -1,0 +1,55 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {ExtractClass} from "Ex15_ExtractClass/ExtractClass";
+import {DelegateClass} from "Ex15_ExtractClass/ExtractClass";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * ExtractClass
+ * 
+ * ExtractClass#1 -> ExtractClass#2 -> ExtractClass#1
+ * 
+ * The field 'field' of class 'ExtractClass#1' is moved/extracted into a delegate class
+ * in version 2. As long as the delegate class is in a containment relationship with version
+ * 2 of 'ExtractClass#1', this is a refactoring.
+ * 
+ * Extract Class: safely model-migrating, refactoring
+ * Inline Class: safely model-migrating, refactoring
+ */
+@VersionAware
+export public class ExtractClassTest extends AbstractRoundTripTest<ExtractClass#1, ExtractClass#2> {
+	
+	@Override
+	public instantiateOriginal() : ExtractClass#1 {
+		return new ExtractClass#1({
+			field: "field"
+		});
+	}
+	
+	@Override
+	public migrate(o1 : ExtractClass#1) : ExtractClass#2 {
+		return new ExtractClass#2({
+			delegate: new DelegateClass#2({
+				field: o1.field
+			})
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : ExtractClass#2) : ExtractClass#1 {
+		return new ExtractClass#1({
+			field: o2.delegate.field
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : ExtractClass#1) {
+		Assert.equal(roundTrip.field, "field", "The value of 'field' is retained in the round-trip instance.");	
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : ExtractClass#2) {
+		Assert.equal(migrated.delegate.field, "field", "The value of 'field' is retained in the migrated instance.");
+		
+	}
+}
+	

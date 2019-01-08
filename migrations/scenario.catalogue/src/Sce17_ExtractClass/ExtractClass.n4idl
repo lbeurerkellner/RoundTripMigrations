@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+// @section v1
+export public class ExtractClass#1 {
+	public f : string
+}
+
+// @section v2
+export public class ExtractClass#2 {
+	public delegate : DelegateClass
+}
+export public class DelegateClass#2 {
+	public f : string
+}
+
+// @section migrations
+@Migration
+function migrateExtractClass(ec : ExtractClass#1) : ExtractClass#2 {
+	const ec2 = new ExtractClass#2();
+	
+	// create new delegate class to hold value of 'field''
+	ec2.delegate = new DelegateClass#2();
+	ec2.delegate.f = ec.f;
+	
+	return ec2;
+}
+
+@Migration
+function migrateBackExtractClass(ec : ExtractClass#2) : ExtractClass#1 {
+	const ec1 = new ExtractClass#1();
+	
+	// collect value of 'field' via 'delegate''
+	ec1.f = ec.delegate.f;
+	
+	return ec1;
+}

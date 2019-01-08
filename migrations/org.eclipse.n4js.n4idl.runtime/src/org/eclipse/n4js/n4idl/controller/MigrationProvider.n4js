@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+/**
+ * A migration provider can be used for the resolution of migrations based on 
+ * given migration arguments.
+ */
+export public interface MigrationProvider {
+	/**
+	 * Returns the migration this {@link MigrationProvider} provides 
+	 * for the given list of arguments.
+	 * 
+	 * In case this handlers does not provide any migration for the given list of arguments, this
+	 * method returns {@code null}.
+	 */
+	public getMigration(args : [?]) : Function?
+}

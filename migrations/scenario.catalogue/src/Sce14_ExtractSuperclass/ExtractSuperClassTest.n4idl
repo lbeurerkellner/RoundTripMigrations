@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+import {ExtractSuperClass} from "Sce14_ExtractSuperclass/ExtractSuperClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class ExtractSuperClassTest 
+	extends FunctionContextRoundTripTest<ExtractSuperClass#1, ExtractSuperClass#2> {
+	
+	@Override
+	public instantiateOriginal() : ExtractSuperClass#1 {
+		const e = new ExtractSuperClass#1();
+		e.genericField = "genericValue";
+		e.specificField = "specificValue";
+		return e;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: ExtractSuperClass#2) {
+		Assert.equal(migrated.genericField, "genericValue");
+		Assert.equal(migrated.specificField, "specificValue");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: ExtractSuperClass#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2018 Luca Beurer-Kellner
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Luca Beurer-Kellner - Initial API and implementation
+ */
+export public abstract class ~MultiGraphModel {
+	public traceLinks : Array<Iterable2<string, string>>
+	
+	public original : SerializedObjectGraph
+	public migrated : SerializedObjectGraph
+	public migratedModified? : SerializedObjectGraph
+	public roundTrip : SerializedObjectGraph 
+}
+
+export public abstract class ~SerializedObjectGraph {
+	public registry : Array<SerializedInstance>
+	
+	public static isInstanceOf(object : Object+) : boolean {
+		return typeof object["registry"] !== "undefined"; 
+	}
+}
+
+
+export public abstract class SerializedType {
+	public name : string
+	public builtIn : boolean
+	public isEnum : boolean
+}
+
+export public abstract class SerializedField {
+	public fieldName : string;
+	public type: SerializedType
+	public value : any
+}
+
+export public abstract class InstanceProxy {
+	public target : int
+}
+
+export public abstract class SerializedInstance {
+	public className : string
+	public fields : [SerializedField]
+	
+	public id : string
+}

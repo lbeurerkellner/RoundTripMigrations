@@ -1,0 +1,45 @@
+import {SpecializeSuperType} from "Ex10_SpecializeSuperType/SpecializeSuperType";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {SpecializeSuperTypeTest} from "Ex10_SpecializeSuperType/SpecializeSuperTypeTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+
+/**
+ * 
+ * Inverse SpecializeSuperType.
+ * 
+ * SpecializeSuperType#2 -> SpecializeSuperType#1 -> SpecializeSuperType#2
+ * 
+ * Inverse round-trip of {@link SpecializeSuperTypeTest}.
+ * 
+ * Since there is no place to store the value of superField, its value
+ * is lost in a roundtrip and replace by the default value for superField.
+ */
+@VersionAware
+export public class InverseSpecializeSuperTypeTest extends InverseRoundTrip<SpecializeSuperType#1, SpecializeSuperType#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<SpecializeSuperType#1, SpecializeSuperType#2> {
+		return new SpecializeSuperTypeTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : SpecializeSuperType#2 {
+		return new SpecializeSuperType#2({
+			superField: "SomeValue"
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : SpecializeSuperType#2) {
+		Assert.equal(roundTrip.superField, "defaultSuperFieldValue", "The 'superField' of the round-trip instance was set to a default value.");	
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : SpecializeSuperType#1) {
+		Assert.equal(InstanceAssert.getOwnPropertyNames(migrated).length, 0, "The migrated instance has no fields");
+	}
+}
