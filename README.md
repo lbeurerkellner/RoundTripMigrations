@@ -19,7 +19,7 @@ In order to run all tests of the catalog, right-click the project “scenario.ca
 
 ## Round-Trip Runner
 
-Additionally you may install the plugins found in the folder "plugins". They provide a special runner and a view for showing object diagrams of the migration. This is explained in the appendix of the thesis.
+Additionally you may install the plugins found in the folder "roundtrip-runner". They provide a special runner and a view for showing object diagrams of the migration. This is explained in the appendix of the thesis.
 
 # License
 
