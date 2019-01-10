@@ -47,7 +47,7 @@ export function migrate(o1 : GeneralizeAttributeArray#1)
 		if (previousRevision != undefined) {
 			// add all previousRevision elements, but the first one
 			previousRevision.field.slice(1)
-				.forEach(e => elements.push(Migrations.copy(Element#2, e)));
+				.forEach(e => elements.push(Migrations.<Object,Object>copy(Element#2, e) as Element#2)); // cf. #1209
 		}
 	}
 	

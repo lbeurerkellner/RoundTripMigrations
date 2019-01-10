@@ -51,7 +51,7 @@ function migrateBack(sc2 : SplitClass#2) : SplitClass#1 {
 	const previousRevision = context.getTrace(sc2)[0] as SplitClass#1;
 	
 	if (previousRevision && !context.isModified(sc2.f)) {
-		sc1.f = copy(Combined#1, previousRevision.f);
+		sc1.f = <Object,Object>copy(Combined#1, previousRevision.f) as Combined#1; // cf. #1209
 	} else {
 		// migrate instance of IntValue to Combined by delegation
 		sc1.f = migrate(sc2.f);

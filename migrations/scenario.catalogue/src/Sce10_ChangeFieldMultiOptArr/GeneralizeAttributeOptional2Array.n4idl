@@ -45,7 +45,7 @@ export function migrate(o1 : GeneralizeAttributeOptional2Array#1) : GeneralizeAt
 	
 	// add all previousRevision elements, but the first one
 	(previousRevision.field || []).slice(1)
-		.forEach(e => elements.push(Migrations.copy(Element#2, e)));
+		.forEach(e => elements.push(Migrations.<Object,Object>copy(Element#2, e) as Element#2)); // cf. #1209 
 
 	o2.field = elements;
 
