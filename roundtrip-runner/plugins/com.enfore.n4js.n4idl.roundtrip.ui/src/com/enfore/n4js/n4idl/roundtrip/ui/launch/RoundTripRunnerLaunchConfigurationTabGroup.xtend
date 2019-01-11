@@ -17,17 +17,11 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup
 import org.eclipse.debug.ui.ILaunchConfigurationDialog
 import org.eclipse.n4js.runner.ui.RunnerLaunchConfigurationMainTab
 
-/**
- * Node.js launch configuration tab group. Creates the main tab and one for the Node.js specific
- * settings.
- */
-public class RoundTripRunnerLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
+ class RoundTripRunnerLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	@Inject
-	private Provider<RunnerLaunchConfigurationMainTab> mainTabProvider;
+	@Inject Provider<RunnerLaunchConfigurationMainTab> mainTabProvider;
 
-	@Inject
-	private Provider<RoundTripLaunchConfigurationTab> roundTripTabProvider;
+	@Inject Provider<RoundTripLaunchConfigurationTab> roundTripTabProvider;
 
 	override createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		tabs = #[mainTabProvider.get, roundTripTabProvider.get];

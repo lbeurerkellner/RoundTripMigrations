@@ -14,12 +14,8 @@ import com.enfore.n4js.n4idl.roundtrip.RoundTripRunnerConstants
 import com.enfore.n4js.n4idl.roundtrip.server.ObjectGraphType
 import com.enfore.n4js.n4idl.roundtrip.server.RoundTripResultStorage.RoundTripResult
 
-/**
- * String-template class for the ObjectGraph Viewer UI that
- * only display one stage (object graph) of the roundtrip.
- * */
-public class ObjectGraphViewerTypeTemplate extends ObjectGraphViewerTemplate{
-	private final ObjectGraphType graphType;
+class ObjectGraphViewerTypeTemplate extends ObjectGraphViewerTemplate{
+	final ObjectGraphType graphType;
 
 	/**
 	 * Initializes a new ObjectGraph HTML template for the
@@ -40,7 +36,7 @@ public class ObjectGraphViewerTypeTemplate extends ObjectGraphViewerTemplate{
 	 * Returns an absolute URL to the local RoundTripServer given
 	 * a relative URI.
 	 */
-	public static def String makeAbsoluteServerUrl(String uri) {
+	static def String makeAbsoluteServerUrl(String uri) {
 		return '''http://localhost:«RoundTripRunnerConstants.DEFAULT_PORT»«uri»''';
 	}
 }

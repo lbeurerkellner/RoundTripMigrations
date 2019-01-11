@@ -13,10 +13,7 @@ package com.enfore.n4js.n4idl.roundtrip.ui.viewer
 import com.enfore.n4js.n4idl.roundtrip.RoundTripRunnerConstants
 import com.enfore.n4js.n4idl.roundtrip.server.RoundTripResultStorage.RoundTripResult
 
-/**
- * String-template class for the ObjectGraph Viewer UI.
- * */
-public class ObjectGraphViewerTemplate {
+ class ObjectGraphViewerTemplate {
 	/**
 	 * Initializes a new ObjectGraph HTML template for the
 	 * given ObjectGraphType.
@@ -80,7 +77,7 @@ public class ObjectGraphViewerTemplate {
 	 * Returns an absolute URL to the local RoundTripServer given
 	 * a relative URI.
 	 */
-	public static def String makeAbsoluteServerUrl(String uri) {
+	static def String makeAbsoluteServerUrl(String uri) {
 		return '''http://localhost:«RoundTripRunnerConstants.DEFAULT_PORT»«uri»''';
 	}
 }

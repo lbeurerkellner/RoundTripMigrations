@@ -25,14 +25,14 @@
          unpack="false"/>
 
    <plugin
-         id="com.enfore.n4js.n4idl.roundtrip.ui"
+         id="org.eclipse.equinox.launcher"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.equinox.launcher"
+         id="com.enfore.n4js.n4idl.roundtrip.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

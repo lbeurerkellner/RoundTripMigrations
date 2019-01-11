@@ -39,10 +39,10 @@ import org.eclipse.n4js.ts.types.TInterface;
 import org.eclipse.n4js.ts.types.TypesPackage;
 import org.eclipse.n4js.ts.utils.TypeUtils;
 import org.eclipse.n4js.typesystem.N4JSTypeSystem;
-import org.eclipse.n4js.typesystem.RuleEnvironmentExtensions;
+import org.eclipse.n4js.typesystem.utils.Result;
+import org.eclipse.n4js.typesystem.utils.RuleEnvironment;
+import org.eclipse.n4js.typesystem.utils.RuleEnvironmentExtensions;
 import org.eclipse.n4js.utils.ResourceNameComputer;
-import org.eclipse.xsemantics.runtime.Result;
-import org.eclipse.xsemantics.runtime.RuleEnvironment;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
@@ -220,10 +220,10 @@ public class RoundTripRunner extends NodeRunner {
 			// check whether the class implements the required interface
 			final RuleEnvironment env = RuleEnvironmentExtensions.newRuleEnvironment(c.eResource());
 
-			Result<Boolean> isSubtype = n4jsTypeSystem.subtype(env,
+			Result isSubtype = n4jsTypeSystem.subtype(env,
 					TypeUtils.createTypeRef(c), contractInterfaceTypeRef);
 
-			return !isSubtype.failed() && isSubtype.getValue();
+			return !isSubtype.isFailure() && isSubtype.isSuccess();
 		}).findAny().orElse(null);
 
 		if (null == roundTripClass) {

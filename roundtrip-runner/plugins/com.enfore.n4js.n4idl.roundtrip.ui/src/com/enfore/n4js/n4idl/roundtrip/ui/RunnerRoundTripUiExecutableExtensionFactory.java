@@ -31,7 +31,7 @@ public class RunnerRoundTripUiExecutableExtensionFactory extends N4ExecutableExt
 	}
 
 	@Override
-	protected String getBunleId() {
+	protected String getBundleId() {
 		return RoundTripRunnerActivator.PLUGIN_ID;
 	}
 

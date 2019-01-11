@@ -13,12 +13,13 @@ package com.enfore.n4js.n4idl.roundtrip;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.n4js.runner.nodejs.NodeEngineCommandBuilder;
 import org.eclipse.n4js.runner.nodejs.NodeRunOptions;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -30,10 +31,10 @@ public class RoundTripEngineCommandBuilder extends NodeEngineCommandBuilder {
 	private static final String ROUND_TRIP_GLOBAL_KEY = "$roundTripRunnerData";
 	private static final String ROUND_TRIP_MODULE_KEY = "module";
 	private static final String ROUND_TRIP_CLASS_NAME = "className";
-
+	
 	@Override
-	protected String getELFCode(NodeRunOptions runOptions, final File node_modules,
-			List<Pair<String, String>> path2name, String execModule, List<String> initModules) throws IOException {
+	protected String getELFCode(NodeRunOptions runOptions, File node_modules,
+			 Map<Path, String> path2name, String execModule, List<String> initModules) throws IOException {
 		StringBuilder builder = new StringBuilder();
 		final String superELF = super.getELFCode(runOptions, node_modules, path2name, execModule, initModules);
 
