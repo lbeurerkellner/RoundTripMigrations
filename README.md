@@ -9,11 +9,15 @@ This thesis contains a details description of the 22 round-trip scenarios.
 
 ## Requirements
 
-You need the Eclipse N4JS IDE for running the migrations. Nightly builds of this IDE can be found at 
+You need the following software to be installed on your machine:
+- Java 8 (exactly 8!! [Oracle Download](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or [OpenJDK](https://openjdk.java.net/install/))
+- Node.js (https://nodejs.org, version 10 recommended)
+
+Furthermore you need the Eclipse N4JS IDE for running the migrations. Nightly builds of this IDE can be found at 
 
 https://projects.eclipse.org/projects/technology.n4js/downloads
 
-Download the IDE for your OS, extract the archive and run the IDE.
+Download the IDE for your OS, extract the archive and run the IDE. The IDE needs Java 8.
 
 
 ### Round-Trip Runner
@@ -55,6 +59,7 @@ In order to resolve all dependencies, open a package.json file with errors and c
 
 ![Quickfix](/img/4_fix_dependencies.png)
 
+Installing missing dependencies and running the scenarios (next step requires Node.js).
 
 ### Run the scenario tests
 
