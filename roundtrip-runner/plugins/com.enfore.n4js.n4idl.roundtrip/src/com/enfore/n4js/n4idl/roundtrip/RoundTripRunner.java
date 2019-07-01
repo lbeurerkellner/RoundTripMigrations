@@ -22,7 +22,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.n4js.generator.AbstractSubGenerator;
 import org.eclipse.n4js.projectModel.IN4JSCore;
 import org.eclipse.n4js.projectModel.IN4JSProject;
@@ -31,7 +30,6 @@ import org.eclipse.n4js.runner.RunConfiguration;
 import org.eclipse.n4js.runner.extension.IRunnerDescriptor;
 import org.eclipse.n4js.runner.extension.RunnerDescriptorImpl;
 import org.eclipse.n4js.runner.extension.RuntimeEnvironment;
-import org.eclipse.n4js.runner.nodejs.NodeRunOptions;
 import org.eclipse.n4js.runner.nodejs.NodeRunner;
 import org.eclipse.n4js.ts.typeRefs.TypeRef;
 import org.eclipse.n4js.ts.types.TClass;
@@ -109,46 +107,47 @@ public class RoundTripRunner extends NodeRunner {
 	}
 
 	@Override
-	protected NodeRunOptions createRunOptions(RunConfiguration runConfig) {
-		NodeRunOptions options = super.createRunOptions(runConfig);
-
+	public RunConfiguration createConfiguration() {
+		return new RoundTripRunConfiguration();
+	}
+	
+	@Override
+	public void prepareConfiguration(RunConfiguration config) {
 		// first make sure that the options are of the correct type.
-		if (!(options instanceof RoundTripRunOptions)) {
+		if (!(config instanceof RoundTripRunConfiguration)) {
 			LOGGER.error("Cannot process malformed NodeRunOptions.");
 			throw new IllegalArgumentException("NodeRunOptions must be subclass of RoundTripRunOptions");
 		}
-
+		final RoundTripRunConfiguration rtConfig = (RoundTripRunConfiguration) config;
+		
 		// determine the exported name of the class in the module, that implements the contract interface
-		final String roundTripClassName = findContractInterfaceClass(runConfig.getUserSelection());
+		final String roundTripClassName = findContractInterfaceClass(rtConfig.getUserSelection());
 
 		if (null == roundTripClassName) {
-			LOGGER.error("Failed to determine " + RoundTripRunnerConstants.RUNNER_CONTRACT_INTERFACE + " implementing class name for module " + runConfig.getUserSelection());
-			return options;
+			LOGGER.error("Failed to determine " + RoundTripRunnerConstants.RUNNER_CONTRACT_INTERFACE + 
+					" implementing class name for module " + rtConfig.getUserSelection());
+			return;
 		}
-
-		// change run options accordingly
-		final RoundTripRunOptions roundTripOptions = (RoundTripRunOptions) options;
-
-		Map<String, Object> data = runConfig.getExecutionData();
-		final String originalUserSelection = getTargetFileName(runConfig.getUserSelection());
-
+		
+		Map<String, Object> data = rtConfig.getExecutionData();
+		final String originalUserSelection = getTargetFileName(rtConfig.getUserSelection());
+		
 		if (null == originalUserSelection) {
 			LOGGER.error("Failed to extract userSelection from executionData.");
+			return;
 		}
-
+		
 		data.put(EXECUTION_DATA_USER_SELECTION_KEY, ROUND_TRIP_RUNNER_RT_PATH);
 
-		roundTripOptions.setExecutionData(JSON.toString(data));
-		roundTripOptions.setRoundTripModule(originalUserSelection);
-		roundTripOptions.setRoundTripClassName(roundTripClassName);
-
-		return options;
+		rtConfig.setExecutionData(data);
+		rtConfig.setRoundTripModule(originalUserSelection);
+		rtConfig.setRoundTripClassName(roundTripClassName);
 	}
-
+	
 	private String getTargetFileName(URI uri) {
 		final String userSelection_targetFileName = resourceNameComputer.generateFileDescriptor(uri, null);
 		IN4JSProject project = resolveProject(uri);
-		String base = AbstractSubGenerator.calculateProjectBasedOutputDirectory(project);
+		String base = AbstractSubGenerator.calculateProjectBasedOutputDirectory(project, true);
 		return base + "/" + userSelection_targetFileName;
 	}
 

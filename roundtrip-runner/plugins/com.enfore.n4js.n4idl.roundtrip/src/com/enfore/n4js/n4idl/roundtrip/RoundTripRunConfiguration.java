@@ -10,12 +10,12 @@
  */
 package com.enfore.n4js.n4idl.roundtrip;
 
-import org.eclipse.n4js.runner.nodejs.NodeRunOptions;
+import org.eclipse.n4js.runner.RunConfiguration;
 
 /**
  * Run options that also hold information on the round trip module.
  */
-public class RoundTripRunOptions extends NodeRunOptions {
+public class RoundTripRunConfiguration extends RunConfiguration {
 	private String roundTripModule;
 	private String roundTripClassExportedName;
 	/**
