@@ -1,1 +1,0 @@
-../../../../n4js/com.enfore.n4js.n4idl.roundtrip.viewer.parent/dist/bundle.js
