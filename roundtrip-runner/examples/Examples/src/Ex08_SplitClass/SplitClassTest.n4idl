@@ -1,0 +1,82 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+
+import {SplitClass} from "Ex08_SplitClass/SplitClass";
+import {Combined} from "Ex08_SplitClass/SplitClass";
+import {IntValue} from "Ex08_SplitClass/SplitClass";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+
+/**
+ * SplitClass
+ * 
+ * SplitClass#1 -> SplitClass#2 -> SplitClass#1
+ * 
+ * The field type 'Combined' is split up into two unrelated
+ * classes. Version 2 of the metamodel does not allow for string
+ * values for the field 'field' of class 'SplitClass' anymore.
+ * 
+ * This metamodel-change comprises of two operations:
+ * 
+ * 1 -> 2
+ * 	* Change field type of 'field' to an unrelated type. 
+ * 		(Conceptually however, the field type is specialized): unsafely model-migrating
+ *  * Split class Combined into IntValue and StringValue: safely model-migrating
+ * 
+ * 2 -> 1
+ *  * Generalize field type of 'field' to unrelated type. (Conceptually, generalize): model-preserving
+ *  * Combine class IntValue and StringValue into Combined: safely model-migrating
+ * 
+ * 
+ */
+@VersionAware
+export public class SplitClassTest extends AbstractRoundTripTest<SplitClass#1, SplitClass#2> {
+	
+	@Override
+	public instantiateOriginal() : SplitClass#1 {
+		return new SplitClass#1({
+			field: new Combined#1({
+				type: "string", 
+				stringValue: "stringValue",
+				intValue: undefined
+			})
+		})
+	}
+	
+	@Override
+	public migrate(o2 : SplitClass#1) : SplitClass#2 {
+		if (o2.field.type == "string") {
+			return new SplitClass#2({
+				// choose default value, field cannot be migrated
+				field: new IntValue#2({intValue: 12})
+			});
+		} else {
+			return new SplitClass#2({
+				field: new IntValue#2({intValue: o2.field.intValue})
+			});
+		}
+	}
+
+	@Override
+	public migrateBack(o1 : SplitClass#2) : SplitClass#1 {
+		return new SplitClass#1({
+			field: new Combined#1({
+				type: "int",
+				intValue: o1.field.intValue,
+				stringValue: undefined
+			})
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : SplitClass#1) {
+		Assert.equal(roundTrip.field.type, "int", "The type of the Combined#1 instance in the round-trip object graph is 'int'.");
+		Assert.isUndefined(roundTrip.field.stringValue, "The 'stringValue' of the Combined#1 instance in the round-trip object graph is undefined.");
+		Assert.equal(roundTrip.field.intValue, 12, "The 'intValue' of the Combined#1 instance in the round-trip object graph is the default value.");	
+	}
+	@Override
+	public assertMigratedInstance(migrated : SplitClass#2) {
+		Assert.equal(migrated.field.intValue, 12, "The 'intValue' of the migrated object graph is the default value.");
+		InstanceAssert.hasNoField("type", migrated.field, "The migrated instance has no more 'type' field.");
+	}
+}
+	

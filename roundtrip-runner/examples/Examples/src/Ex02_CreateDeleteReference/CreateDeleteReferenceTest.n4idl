@@ -1,0 +1,48 @@
+
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {CreateDeleteReference} from "Ex02_CreateDeleteReference/CreateDeleteReference";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * CreateDeleteReference
+ * 
+ * CreateDeleteReference#2 -> CreateDeleteReference#1 -> CreateDeleteReference#2
+ * 
+ * In version 2 of class CreateDeleteReference a new reference field on 
+ * another instance of CreateDeleteReference is created. The reference target
+ * is lost when migrating, as the previous version 1 does not have any field to store it in.
+ * 
+ * Create Reference: safely model-migrating
+ * Delete Feature: unsafely model-migrating
+ */
+@VersionAware
+export public class CreateDeleteReferenceTest extends AbstractRoundTripTest<CreateDeleteReference#2, CreateDeleteReference#1> {
+	
+	@Override
+	public instantiateOriginal() : CreateDeleteReference#2 {
+		return new CreateDeleteReference#2({
+			field1: new CreateDeleteReference#2({field1: undefined})
+		});
+	}
+	
+	@Override
+	public migrate(o2 : CreateDeleteReference#2) : CreateDeleteReference#1 {
+		return new CreateDeleteReference#1()
+	}
+	
+	@Override
+	public migrateBack(o1 : CreateDeleteReference#1) : CreateDeleteReference#2 {
+		return new CreateDeleteReference#2({field1: undefined});
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : CreateDeleteReference#1) {
+		InstanceAssert.hasOwnPropertyNames(migrated, [], "The migrated instance has no 'own'-properties.")
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : CreateDeleteReference#2) {
+		Assert.isUndefined(roundTrip.field1, "The field 'field1' is undefined.");
+	}
+}

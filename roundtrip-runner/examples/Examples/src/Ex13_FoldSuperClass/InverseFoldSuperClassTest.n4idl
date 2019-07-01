@@ -1,0 +1,44 @@
+import {FoldSuperClass} from "Ex13_FoldSuperClass/FoldSuperClass";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {FoldSuperClassTest} from "Ex13_FoldSuperClass/FoldSuperClassTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse FoldSuperClass.
+ * 
+ * FoldSuperClass#2 -> FoldSuperClass#1 -> FoldSuperClass#2
+ * 
+ * Inverse round-trip of {@link FoldSuperClassTest}.
+ */
+@VersionAware
+export public class InverseFoldSuperClassTest extends InverseRoundTrip<FoldSuperClass#1, FoldSuperClass#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<FoldSuperClass#1, FoldSuperClass#2> {
+		return new FoldSuperClassTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : FoldSuperClass#2 {
+		return new FoldSuperClass#2({
+			f1: 100,
+			f2: 200
+		});
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : FoldSuperClass#1) {
+		Assert.equal(migrated.f1, 100, "The value of field 'f1' of the migrated instance is retained");
+		Assert.equal(migrated.f2, 200, "The value of field 'f2' of the migrated instance is retained");	
+	}
+	
+	@Override 
+	public assertRoundTripInstance(roundTrip : FoldSuperClass#2) {
+		Assert.equal(roundTrip.f1, 100, "The value of field 'f1' of the migrated instance is retained");
+		Assert.equal(roundTrip.f2, 200, "The value of field 'f2' of the migrated instance is retained");
+	}
+}

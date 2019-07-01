@@ -1,0 +1,31 @@
+import {A} from "Ex14_ExtractSubClass/ExtractSubClass";
+import {ExtractSubClass} from "Ex14_ExtractSubClass/ExtractSubClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class ExtractSubClassTest 
+	extends FunctionContextRoundTripTest<ExtractSubClass#2, ExtractSubClass#1> {
+	
+	@Override
+	public instantiateOriginal() : ExtractSubClass#2 {
+		const es = new ExtractSubClass#2();
+		es.f1 = new A#2();
+		es.f1.genericField = "genericValue1";
+		
+		return es;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: ExtractSubClass#1) {
+		Assert.isInstanceOf(migrated.f1, A#1);
+		Assert.equal(migrated.f1.genericField, "genericValue1");
+		Assert.equal(migrated.f1.specificField, "defaultValue");		
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: ExtractSubClass#2) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

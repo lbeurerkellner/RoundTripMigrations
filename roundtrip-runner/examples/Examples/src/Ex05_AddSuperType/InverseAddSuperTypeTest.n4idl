@@ -1,0 +1,46 @@
+
+import {AddSuperType} from "Ex05_AddSuperType/AddSuperType";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {AddSuperTypeTest} from "Ex05_AddSuperType/AddSuperTypeTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse AddSuperType.
+ * 
+ * AddSuperType#1 -> AddSuperType#2 -> AddSuperType#1
+ * 
+ * Inverse round-trip of {@link AddSuperTypeTest}.
+ * 
+ * As the addition of a super type is model-preserving, this roundtrip
+ * migration can be carried out without any issues.
+ */
+@VersionAware
+export public class InverseAddSuperTypeTest extends InverseRoundTrip<AddSuperType#2, AddSuperType#1> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<AddSuperType#2, AddSuperType#1> {
+		return new AddSuperTypeTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : AddSuperType#1 {
+		return new AddSuperType#1({
+			ownedField: "ownedValue", 
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : AddSuperType#1) {
+		Assert.equal(roundTrip.ownedField, "ownedValue", "The field 'ownedField' of the round-trip migrated instance has the original value.");
+	}
+	@Override
+	public assertMigratedInstance(migrated : AddSuperType#2) {
+		Assert.equal(migrated.ownedField, "ownedValue", "The field 'ownedField' of the migrated instance has the original value.");
+		Assert.equal(migrated.superField1, "defaultValue1", "The field 'superField1' of the migrated instance was set to a default value.");
+		Assert.equal(migrated.superField2, "defaultValue2", "The field 'superField2' of the migrated instance was set to a default value.");
+	}
+}

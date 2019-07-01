@@ -1,0 +1,70 @@
+import {ConcreteClass} from "Ex09_DropClassAbstract/DropClassAbstract";
+import {DropClassAbstract} from "Ex09_DropClassAbstract/DropClassAbstract";
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * DropClassAbstract
+ * 
+ * DropClassAbstract#1 -> DropClassAbstract#2 -> DropClassAbstract#1
+ * 
+ * The 'abstract' declaration for the class AbstractClass is dropped in the second version.
+ * As a consequence, the field 'field' of class DropClassAbstract may now also
+ * hold instances of type 'AbstractClass'. Thus the back-migration must be aware
+ * of that and choose default values if applicable. 
+ * 
+ * Make Class Abstract: unsafely model-migrating
+ * Drop Class Abstract: model preserving
+ */
+@VersionAware
+export public class DropClassAbstractTest extends AbstractRoundTripTest<DropClassAbstract#1, DropClassAbstract#2> {
+	
+	@Override
+	public instantiateOriginal() : DropClassAbstract#1 {
+		return new DropClassAbstract#1({
+			field: new ConcreteClass#1({
+				concreteField: "concreteFieldValue",
+				abstractClassField: "abstractClassFieldValue"
+			})
+		});
+	}
+	
+	@Override
+	public migrate(o1 : DropClassAbstract#1) : DropClassAbstract#2 {
+		return new DropClassAbstract#2({
+			field: new ConcreteClass#2({
+				concreteField: (o1.field as ConcreteClass#1).concreteField,
+				abstractClassField: o1.field.abstractClassField
+			})
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : DropClassAbstract#2) : DropClassAbstract#1 {
+		// Allow for instances of AbstractClass#2 as the class is no longer
+		// abstract. Thus, the cast to ConcreteClass#2 may not succeed.
+		let concreteFieldValue = o2.field instanceof ConcreteClass#2 ? 
+			(o2.field as ConcreteClass#2).concreteField : "default";
+		
+		return new DropClassAbstract#1({
+			field: new ConcreteClass#1({
+				concreteField: concreteFieldValue,
+				abstractClassField: o2.field.abstractClassField
+			})
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : DropClassAbstract#1) {
+		Assert.equal(roundTrip.field.abstractClassField, "abstractClassFieldValue", "The 'abstractClassField' of the round-trip instance has the original value.");
+		Assert.isInstanceOf(roundTrip.field, ConcreteClass#1, "The round-trip instance is still an instance of the concrete class ConcreteClass#1.");
+		Assert.equal((roundTrip.field as ConcreteClass#1).concreteField, "concreteFieldValue", "The 'concreteField' of the round-trip instance has the original value.");	
+	}
+	@Override
+	public assertMigratedInstance(migrated : DropClassAbstract#2) {
+		Assert.equal(migrated.field.abstractClassField, "abstractClassFieldValue", "The 'abstractClassField' of the migrated instance has the original value.");
+		Assert.isInstanceOf(migrated.field, ConcreteClass#2, "The migrated instance is still an instance of the concrete class ConcreteClass#2.");
+		Assert.equal((migrated.field as ConcreteClass#2).concreteField, "concreteFieldValue", "The 'concreteField' of the migrated instance has the original value.");
+	}
+}
+	

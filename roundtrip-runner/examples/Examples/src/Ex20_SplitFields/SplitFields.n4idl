@@ -1,0 +1,30 @@
+export public class X#1 {
+	public a : string
+	public b : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class Y#2 {
+	public a: string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class Z#2 {
+	public b: string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class SplitFields#1 {
+	public x : X
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+export public class SplitFields#2 {
+	public y : Y
+	public z : Z
+
+	constructor(@Spec spec : ~i~this) {}
+}

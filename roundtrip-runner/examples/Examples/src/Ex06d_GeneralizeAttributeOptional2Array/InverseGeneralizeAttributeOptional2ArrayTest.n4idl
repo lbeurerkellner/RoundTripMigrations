@@ -1,0 +1,44 @@
+import {GeneralizeAttributeOptional2Array} from "Ex06d_GeneralizeAttributeOptional2Array/GeneralizeAttributeOptional2Array";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {GeneralizeAttributeOptional2ArrayTest} from "Ex06d_GeneralizeAttributeOptional2Array/GeneralizeAttributeOptional2ArrayTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse GeneralizeAttributeOptional2Array.
+ * 
+ * GeneralizeAttributeOptional2Array#2 -> GeneralizeAttributeOptional2Array#1 -> GeneralizeAttributeOptional2Array#2
+ * 
+ * Inverse round-trip of {@link GeneralizeAttributeOptional2ArrayTest}.
+ * 
+ * The initial object graph is an instance of GeneralizeAttributeOptional2Array#2 with 
+ * an empty array for 'field'. Thus, the migration will migrate that to an absent optional
+ * field in version 1.
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeOptional2ArrayTest extends InverseRoundTrip<GeneralizeAttributeOptional2Array#1, GeneralizeAttributeOptional2Array#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<GeneralizeAttributeOptional2Array#1, GeneralizeAttributeOptional2Array#2> {
+		return new GeneralizeAttributeOptional2ArrayTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeOptional2Array#2 {
+		return new GeneralizeAttributeOptional2Array#2({
+			field: []
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeOptional2Array#2) {
+		Assert.equal(roundTrip.field.length, 0, "The round-trip instance has an empty array for field 'field'.")
+	}
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeOptional2Array#1) {
+		Assert.isUndefined(migrated.field, "The field 'field' of the migrated instance is an absent optional / undefined.")
+	}
+}

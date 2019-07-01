@@ -1,0 +1,34 @@
+export public class A#1 {
+	public genericField : int
+	public specificField : string
+	
+	constructor(@Spec spec : ~i~this) {}	
+}
+
+export public class ExtractSubClass#1 {
+	public f1 : A
+	public f2 : A 
+
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class A#2 {
+	public genericField : int
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class SubA#2 extends A {
+	public specificField : string
+	
+	constructor(@Spec spec : ~i~this) {
+		super(spec);
+	}
+}
+
+export public class ExtractSubClass#2 {
+	public f1 : A
+	public f2 : SubA
+
+	constructor(@Spec spec : ~i~this) {}
+}

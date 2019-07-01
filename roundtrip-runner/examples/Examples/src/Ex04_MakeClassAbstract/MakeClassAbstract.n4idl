@@ -1,0 +1,41 @@
+export public class MakeClassAbstract#1 {
+	public field : Value
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+export public class MakeClassAbstract#2 {
+	public field : Value
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class Value#1 {
+	public commonField : string
+	
+	public field1 : string
+	public field2 : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public abstract class Value#2 {
+	public commonField : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class Value1#2 extends Value {
+	public field1 : string
+	
+	constructor(@Spec spec : ~i~this) {
+		super({commonField: spec.commonField});
+	}
+}
+
+export public class Value2#2 extends Value {
+	public field2 : string
+	
+	constructor(@Spec spec : ~i~this) {
+		super({commonField: spec.commonField});
+	}
+}

@@ -1,0 +1,6 @@
+@@Global @@ProvidedByRuntime
+
+export external public class HTMLElement {
+	public innerHTML : string
+	public style : Object+
+}

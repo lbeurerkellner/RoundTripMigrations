@@ -1,0 +1,64 @@
+// @section v1
+export public class SplitFields#1 {
+	public x : X
+}
+
+export public class X#1 {
+	public a : string
+	public b : string
+}
+
+// @section v2
+export public class SplitFields#2 {
+	public y : Y
+	public z : Z
+}
+export public class Y#2 {
+	public a: string
+}
+
+export public class Z#2 {
+	public b: string
+}
+
+// @section migrations
+@Migration function migrateSplitFields(sf : SplitFields#1) : SplitFields#2 {
+	const sf2 = new SplitFields#2();
+	
+	// migrating X#1 by splitting it into Y#2, Z#2
+	const yAndZ = migrate(sf.x);
+	sf2.y = yAndZ.y;
+	sf2.z = yAndZ.z;
+	
+	return sf2;
+}
+
+@Migration function migrateBackSplitFields(sf : SplitFields#2) : SplitFields#1 {
+	const sf1 = new SplitFields#1();
+
+	// migrate back to X#1 based on Y#2, Z#2 
+	sf1.x = migrate(sf.y, sf.z);
+	
+	return sf1;
+}
+
+@Migration function migrateYZ(y : Y#2, z : Z#2) : X#1 {
+	const x = new X#1();
+	
+	x.a = y.a;
+	x.b = z.b;
+	
+	return x;
+}
+
+@Migration function migrateX(x : X#1) : ~Object with {y : Y#2, z : Z#2} {
+	const y = new Y#2();
+	const z = new Z#2();
+	
+	// copy over the values of field 'a' and 'b' to
+	// the instances of X and Z respectively
+	y.a = x.a;
+	z.b = x.b;
+	
+	return {y: y, z: z};
+}

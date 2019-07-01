@@ -1,0 +1,10 @@
+{
+	"name": "n4js-runtime-light-html5",
+	"n4js": {
+		"projectType": "runtimeLibrary",
+		"output": "src-gen",
+		"sources": {
+			"external": ["src"]
+		}
+	}
+}

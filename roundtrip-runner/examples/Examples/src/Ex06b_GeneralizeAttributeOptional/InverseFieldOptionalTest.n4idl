@@ -1,0 +1,38 @@
+import {FieldOptional} from "Ex06b_GeneralizeAttributeOptional/FieldOptional";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {FieldOptionalTest} from "Ex06b_GeneralizeAttributeOptional/FieldOptionalTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse FieldOptional.
+ * 
+ * FieldOptional#2 -> FieldOptional#1 -> FieldOptional#2
+ * 
+ * Inverse round-trip of {@link FieldOptionalTest}.
+ */
+@VersionAware
+export public class InverseFieldOptionalTest extends InverseRoundTrip<FieldOptional#1, FieldOptional#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<FieldOptional#1, FieldOptional#2> {
+		return new FieldOptionalTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : FieldOptional#2 {
+		return new FieldOptional#2({});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : FieldOptional#2) {
+		Assert.equal(roundTrip.field, "defaultValue", "The 'field' of the round-trip instance was set to a default value.");
+	}
+	@Override
+	public assertMigratedInstance(migrated : FieldOptional#1) {
+		Assert.equal(migrated.field, "defaultValue", "The 'field' of the migrated instance was set to a default value.");
+	}
+}

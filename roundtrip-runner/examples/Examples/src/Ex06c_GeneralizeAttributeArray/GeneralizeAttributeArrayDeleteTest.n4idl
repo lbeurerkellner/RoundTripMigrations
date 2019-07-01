@@ -1,0 +1,53 @@
+import {Element} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {GeneralizeAttributeArray} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {GeneralizeAttributeArrayTest} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArrayTest";
+import {RoundTripModificationMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripModificationMigration";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * GeneralizeAttributeArray
+ * 
+ * GeneralizeAttributeArray#1 -> GeneralizeAttributeArray#2 -> GeneralizeAttributeArray#1
+ * 
+ * Similar to the scenario {@link GeneralizeAttributeArrayTest}, but
+ * in version 2 the first element is removed from the array.
+ * 
+ * To accommodate for that change in version 1, the migration chooses a default value (due 
+ * to its non-optional character, an undefined value for 'field' is technically not valid).
+ * 
+ */
+@VersionAware
+export public class GeneralizeAttributeArrayDeleteTest 
+	extends GeneralizeAttributeArrayTest 
+	implements RoundTripModificationMigration<GeneralizeAttributeArray#1, GeneralizeAttributeArray#2> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#1 {
+		return new GeneralizeAttributeArray#1({
+			field: new Element#1({value: "singleElementValue"})
+		});
+	}
+	
+	@Override
+	public modifyMigratedInstance(o2 : GeneralizeAttributeArray#2) {
+		// remove the first element
+		o2.field.shift();
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeArray#1) {
+		Assert.equal(roundTrip.field.value, "defaultValue", "The 'value' of the round-trip instance was set to a default value.");	
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeArray#2) {
+		Assert.equal(migrated.field.length, 1, "The 'value' of the migrated instance is an array with exactly one element.");
+		Assert.equal(migrated.field[0].value, "singleElementValue", "The first element of 'value' of the migrated instance has the original value.");
+	}
+	
+	@Override
+	public assertModifiedMigratedInstance(modified : GeneralizeAttributeArray#2) {
+		Assert.equal(modified.field.length, 0, "The 'value' of the modified migrated instance is an array without any elements.");
+	}
+}
+	

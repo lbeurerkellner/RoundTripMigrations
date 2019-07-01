@@ -1,0 +1,39 @@
+import {CreateDeleteDependentField} from "Ex01b_c_CreateDeleteDependentField/CreateDeleteDependentField";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {ModifyingFunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/ModifyingFunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class CreateDeleteDependentFieldTest 
+	extends ModifyingFunctionContextRoundTripTest<CreateDeleteDependentField#1, CreateDeleteDependentField#2>{
+	
+	@Override
+	public instantiateOriginal() : CreateDeleteDependentField#1 {
+		let o1 = new CreateDeleteDependentField#1();
+	
+		o1.hereToStay = "valueToStay";
+		o1.hereToStayTwice = o1.hereToStay + " " + o1.hereToStay;
+		
+		return o1;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : CreateDeleteDependentField#2) {
+		migrated.hereToStay = "newHereToStay";
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: CreateDeleteDependentField#2) {
+		Assert.equal(migrated.hereToStay, "valueToStay", "'hereToStay' has its original value in the round-trip instance.");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: CreateDeleteDependentField#1) {
+		const expectation = {
+			hereToStay: "newHereToStay", // this should contain the modified value
+			hereToStayTwice: "newHereToStay newHereToStay" // newly computed field
+		}
+		InstanceAssert.equalSerialisation(roundTrip, expectation, 
+			"The serialisation of the round-trip matches the original serialisation.");
+	}
+}

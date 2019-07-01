@@ -1,0 +1,37 @@
+import {Course} from "Ex19_AggregateTypeIntoValue/AggregateTypeIntoValue";
+import {Exam} from "Ex19_AggregateTypeIntoValue/AggregateTypeIntoValue";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class AggregateTypeIntoValueModifyTest 
+	extends ModificationMappingTest<Course#1, Course#2> {
+	
+	@Override
+	public instantiateOriginal() : Course#1 {
+		const course = new Course#1();
+		
+		course.exams = [ new Exam#1(), new Exam#1(), new Exam#1()]
+		course.exams[0].mark = 1.0;
+		course.exams[1].mark = 1.5;
+		course.exams[2].mark = 2.0;
+		
+		return course;
+	}
+	
+	@Override public modifyMigratedInstance(migrated : Course#2) {
+		migrated.averageMark = 3.0;
+	}
+	
+	@Override public modifyOriginalInstance(original : Course#1) {
+		original.exams = [new Exam#1()];
+		original.exams[0].mark = 3.0;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: Course#2) {
+		Assert.equal(migrated.averageMark, 1.5);
+	}
+	
+}

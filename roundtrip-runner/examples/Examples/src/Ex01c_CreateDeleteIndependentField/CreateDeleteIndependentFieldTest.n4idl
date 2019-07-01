@@ -1,0 +1,82 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {Style} from "Ex01c_CreateDeleteIndependentField/CreateDeleteIndependentField";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+import {RoundTripModificationMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripModificationMigration";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+
+/**
+ * CreateDeleteIndependentField
+ * 
+ * Style#1 -> Style#2 -> Style#1
+ * 
+ * The field 'foregroundColor' is removed in the second version of class 'Style'.
+ * 
+ * The field 'backgroundColor' and 'foregroundColor' are functionally independent.
+ * Thus, in the migration 2 -> 1, foregroundColor cannot be computed based on the 
+ * backgroundColor. Therefore, the migration chooses a default value for the field.
+ * 
+ * The method 'setAllColors' is defined for both versions of the 'Style' class. 
+ * Both of the method implementations are correct and complete. However, when 
+ * executing the round-trip migration, the round-trip object graph does not reflect
+ * the desired values:
+ * In this current implementation the default foreground color will be chosen. However, 
+ * even if additional information (e.g. previous instances of version 2) were available 
+ * at the time of migrating 2 -> 1, there would be no way to infer the value of field
+ * 'foregroundColor'.
+ * Only a repeated invocation of 'setAllColors' with the same parameters on the most-recent
+ * version 2 instance of Style would yield the desired values.
+ *  
+ */
+@VersionAware
+export public class CreateDeleteIndependentFieldTest 
+	extends AbstractRoundTripTest<Style#1, Style#2>
+	implements RoundTripModificationMigration<Style#1, Style#2> {
+	
+	@Override
+	public instantiateOriginal() : Style#1 {
+		return new Style#1({
+			backgroundColor: "white",
+			foregroundColor: "black"
+		})
+	}
+	
+	@Override
+	public migrate(o1 : Style#1) : Style#2 {
+		return new Style#2({
+			backgroundColor: o1.backgroundColor
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : Style#2) : Style#1 {
+		// return migrated version
+		return new Style#1({
+			backgroundColor: o2.backgroundColor,
+			// use default value here
+			foregroundColor: "defaultForeground"
+		});
+	}
+	
+	@Override
+	public modifyMigratedInstance(o2: Style#2) {
+		o2.setAllColors("red");
+	}
+
+	@Override
+	public assertMigratedInstance(migrated : Style#2) {
+		Assert.equal(migrated.backgroundColor, "white", "The migrated 'backgroundColor' has the original value.")
+		InstanceAssert.hasNoField("foregroundColor", migrated, "The migrated instance has no more 'foregroundColor' field.")
+	}
+	
+	@Override
+	public assertModifiedMigratedInstance(modified : Style#2) {
+		Assert.equal(modified.backgroundColor, "red", "The modified 'backgroundColor' has the modified value.")
+	}
+
+	@Override
+	public assertRoundTripInstance(roundTrip : Style#1) {
+		Assert.equal(roundTrip.backgroundColor, "red", "The 'backgroundColor' has the changed value.");
+		Assert.equal(roundTrip.foregroundColor, "defaultForeground", "The 'foregroundColor' assumed a default value.");
+	}
+}
+	

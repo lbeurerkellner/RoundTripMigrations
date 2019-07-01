@@ -1,0 +1,48 @@
+import {DropClassAbstract} from "Ex09_DropClassAbstract/DropClassAbstract";
+import {AbstractClass} from "Ex09_DropClassAbstract/DropClassAbstract";
+import {ConcreteClass} from "Ex09_DropClassAbstract/DropClassAbstract";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {DropClassAbstractTest} from "Ex09_DropClassAbstract/DropClassAbstractTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * Inverse DropClassAbstract.
+ * 
+ * DropClassAbstract#2 -> DropClassAbstract#1 -> DropClassAbstract#2
+ * 
+ * Inverse round-trip of {@link DropClassAbstractTest}.
+ */
+@VersionAware
+export public class InverseDropClassAbstractTest extends InverseRoundTrip<DropClassAbstract#1, DropClassAbstract#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<DropClassAbstract#1, DropClassAbstract#2> {
+		return new DropClassAbstractTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : DropClassAbstract#2 {
+		return new DropClassAbstract#2({
+			field: new AbstractClass#2({
+				abstractClassField: "abstractClassFieldValue"
+			})
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : DropClassAbstract#2) {
+		Assert.isInstanceOf(roundTrip.field, ConcreteClass#2, "The round-trip instance is an instance of ConcreteClass#2");
+		Assert.equal(roundTrip.field.abstractClassField, "abstractClassFieldValue", "The 'abstractClassField' of the round-trip instance retained the original value.");
+		Assert.equal((roundTrip.field as ConcreteClass#2).concreteField, "default", "The 'concreteField' of the round-trip instance was set to a default value.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : DropClassAbstract#1) {
+		Assert.isInstanceOf(migrated.field, ConcreteClass#1, "The migrated instance is an instance of ConcreteClass#1");
+		Assert.equal(migrated.field.abstractClassField, "abstractClassFieldValue", "The 'abstractClassField' of the migrated instance retained the original value.");
+		Assert.equal((migrated.field as ConcreteClass#1).concreteField, "default", "The 'concreteField' of the migrated instance was set to a default value.");	
+	}
+}

@@ -1,0 +1,60 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {SplitFields} from "Ex20_SplitFields/SplitFields";
+import {X, Y, Z} from "Ex20_SplitFields/SplitFields";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * SplitFields
+ * 
+ * SplitFields#1 -> SplitFields#2 -> SplitFields#1
+ * 
+ * The fields of X#1 are split into classes Y#2 and Z#2 (X.a -> Y.a, X.b -> Z.b).
+ */
+@VersionAware
+export public class SplitFieldsTest extends AbstractRoundTripTest<SplitFields#1, SplitFields#2> {
+	
+	@Override
+	public instantiateOriginal() : SplitFields#1 {
+		return new SplitFields#1({
+			x: new X#1({
+				a: "aValue",
+				b: "bValue"
+			})
+		});
+	}
+	
+	@Override
+	public migrate(o1 : SplitFields#1) : SplitFields#2 {
+		return new SplitFields#2({
+			y: new Y#2({
+				a: o1.x.a
+			}),
+			z: new Z#2({
+				b: o1.x.b
+			})
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : SplitFields#2) : SplitFields#1 {
+		return new SplitFields#1({
+			x: new X#1({
+				a: o2.y.a,
+				b: o2.z.b
+			})
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : SplitFields#1) {
+		Assert.equal(roundTrip.x.a, "aValue", "The field 'a' is retained in the round-trip instance.");
+		Assert.equal(roundTrip.x.b, "bValue", "The field 'b' is retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : SplitFields#2) {
+		Assert.equal(migrated.y.a, "aValue", "The field 'a' is retained in the migrated instance.");
+		Assert.equal(migrated.z.b, "bValue", "The field 'b' is retained in the migrated instance.");
+	}
+}
+	

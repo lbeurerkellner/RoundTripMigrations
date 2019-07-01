@@ -1,0 +1,63 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {GeneralizeAttribute} from "Ex06a_GeneralizeAttributeType/GeneralizeAttribute";
+import {AttributeType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttribute";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * GeneralizeAttribute
+ * 
+ * GeneralizeAttribute#1 -> GeneralizeAttribute#2 -> GeneralizeAttribute#1
+ * 
+ * The field 'field' of type GeneralizeAttribute is generalized to be of type 'SuperAttributeType' 
+ * in version 2. In some cases when migrating 2->1, a default value for the field 'specific'
+ * of type AttributeType must be chosen.
+ * 
+ * Generalize Attribute Type: model-preserving
+ * Specialize Attribute Type: unsafely model-migrating
+ */
+@VersionAware
+export public class GeneralizeAttributeTest extends AbstractRoundTripTest<GeneralizeAttribute#1, GeneralizeAttribute#2> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttribute#1 {
+		return new GeneralizeAttribute#1({
+			field: new AttributeType#1({
+				general: "generalValue",
+				specific: "specificValue"
+			})
+		});
+	}
+	
+	@Override
+	public migrate(o2 : GeneralizeAttribute#1) : GeneralizeAttribute#2 {
+		return new GeneralizeAttribute#2({
+			field: o2.field
+		});
+	}
+
+	@Override
+	public migrateBack(o1 : GeneralizeAttribute#2) : GeneralizeAttribute#1 {
+		return new GeneralizeAttribute#1({
+			field: new AttributeType#1({
+				general: o1.field.general,
+				specific: (o1.field instanceof AttributeType#2) ? 
+					(o1.field as AttributeType#2).specific :
+					"specificDefaultValue"
+			}) 
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttribute#1) {
+		Assert.equal(roundTrip.field.general, "generalValue", "The field 'general' has the original value.");
+		Assert.equal(roundTrip.field.specific, "specificValue", "The field 'specific' has the original value.");		
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttribute#2) {
+		Assert.equal(migrated.field.general, "generalValue", "The field 'general' has the original value.");
+		Assert.isInstanceOf(migrated.field, AttributeType#2, "The value of field 'field' is of type AttributeType in the migrated instance.");
+		Assert.equal((migrated.field as AttributeType#2).specific, "specificValue", "The field 'specific' has the ori)ginal value.");
+	}
+}
+	

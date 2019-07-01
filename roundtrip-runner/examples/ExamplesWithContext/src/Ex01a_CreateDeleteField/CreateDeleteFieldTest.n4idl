@@ -1,0 +1,29 @@
+import {AddField} from "Ex01a_CreateDeleteField/AddField";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class CreateDeleteFieldTest extends FunctionContextRoundTripTest<AddField#1, AddField#2> {
+	
+	@Override
+	public instantiateOriginal() : AddField#1 {
+		let o1 = new AddField#1();
+		
+		o1.field1 = "value1";
+		
+		return o1;
+	}
+	
+	@Override
+	public assertMigratedInstance(roundTrip : AddField#2) {
+		Assert.equal(roundTrip.field1, "value1", "Value of field1 matches");
+		Assert.equal(roundTrip.field2, "defaultValue2", "Value of field2 matches");
+	}
+	
+	@Override
+	public assertRoundTripInstance(migrated : AddField#1) {
+		Assert.equal(migrated.field1, "value1", "Value of field1 is migrated correctly");
+		InstanceAssert.hasNoField("field2", migrated, "field2 is not present in the migrated instance");
+	}
+}

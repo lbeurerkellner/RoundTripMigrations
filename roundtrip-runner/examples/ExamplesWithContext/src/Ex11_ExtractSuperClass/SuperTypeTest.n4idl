@@ -1,0 +1,28 @@
+import {ExtractSuperClass} from "Ex11_ExtractSuperClass/ExtractSuperClass";
+import {SuperClass} from "Ex11_ExtractSuperClass/ExtractSuperClass";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class SuperClassTest 
+	extends FunctionContextRoundTripTest<SuperClass#2, ExtractSuperClass#1> {
+	
+	@Override
+	public instantiateOriginal() : SuperClass#2 {
+		const s = new SuperClass#2();
+		s.genericField = "genericValue";
+		return s;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: ExtractSuperClass#1) {
+		Assert.equal(migrated.genericField, "genericValue");
+		Assert.equal(migrated.specificField, "defaultValue");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: SuperClass#2) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

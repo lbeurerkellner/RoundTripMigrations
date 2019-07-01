@@ -1,0 +1,39 @@
+import {AddField} from "Ex01a_CreateDeleteField/AddField";
+import {InstanceAssert} from "com/enfore/n4js/n4idl/assert/InstanceAssert";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class CreateDeleteFieldModifyTest extends ModificationMappingTest<AddField#1, AddField#2> {
+	
+	@Override
+	public instantiateOriginal() : AddField#1 {
+		let o1 = new AddField#1();
+		
+		o1.field1 = "value1";
+		
+		return o1;
+	}
+	
+	@Override
+	public modifyOriginalInstance(original : AddField#1) {
+		original.field1 = "modifiedValue";
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : AddField#2) {
+		migrated.field1 = "modifiedValue";
+	}
+	
+	@Override
+	public assertMigratedInstance(roundTrip : AddField#2) {
+		Assert.equal(roundTrip.field1, "value1", "Value of field1 matches");
+		Assert.equal(roundTrip.field2, "defaultValue2", "Value of field2 matches");
+	}
+	
+	@Override
+	public assertRoundTripInstance(migrated : AddField#1) {
+		Assert.equal(migrated.field1, "modifiedValue", "Modified value of field1 is visible in version 1.");
+		InstanceAssert.hasNoField("field2", migrated, "field2 is not present in the migrated instance");
+	}
+}

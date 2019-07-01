@@ -1,0 +1,46 @@
+import {
+	ExtractClass,
+	DelegateClass
+} from "Ex15_ExtractClass/ExtractClass";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {ExtractClassTest} from "Ex15_ExtractClass/ExtractClassTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse ExtractClass.
+ * 
+ * ExtractClass#2 -> ExtractClass#1 -> ExtractClass#2
+ * 
+ * Inverse round-trip of {@link ExtractClassTest}.
+ */
+@VersionAware
+export public class InverseExtractClassTest extends InverseRoundTrip<ExtractClass#1, ExtractClass#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<ExtractClass#1, ExtractClass#2> {
+		return new ExtractClassTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : ExtractClass#2 {
+		return new ExtractClass#2({
+			delegate: new DelegateClass#2({
+				field: "fieldValue"
+			})
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : ExtractClass#2) {
+		Assert.equal(roundTrip.delegate.field, "fieldValue", "The value of 'field' was retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : ExtractClass#1) {
+		Assert.equal(migrated.field, "fieldValue", "The value of 'field' was retained in the migrated instance.");
+	}
+}
