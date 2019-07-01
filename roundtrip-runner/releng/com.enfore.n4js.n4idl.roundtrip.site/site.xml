@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.enfore.n4js.n4idl.roundtrip.sdk_1.0.0.201907012337.jar" id="com.enfore.n4js.n4idl.roundtrip.sdk" version="1.0.0.201907012337">
+   <feature url="features/com.enfore.n4js.n4idl.roundtrip.sdk_1.0.0.201907020114.jar" id="com.enfore.n4js.n4idl.roundtrip.sdk" version="1.0.0.201907020114">
       <category name="round-trip-runner"/>
    </feature>
    <category-def name="round-trip-runner" label="N4IDL Round Trip Runner"/>

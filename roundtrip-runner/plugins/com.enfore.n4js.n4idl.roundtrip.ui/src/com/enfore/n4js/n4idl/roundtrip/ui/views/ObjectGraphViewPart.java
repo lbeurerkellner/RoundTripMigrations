@@ -37,6 +37,7 @@ public abstract class ObjectGraphViewPart extends ViewPart implements IViewPart,
 	public void createPartControl(Composite parent) {
 		GridLayoutFactory.fillDefaults().applyTo(parent);
 		browser = new Browser(parent, SWT.NONE);
+		
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(browser);
 
 		getBrowser().setUrl(ObjectGraphViewerTypeTemplate.makeAbsoluteServerUrl(getQuery()));

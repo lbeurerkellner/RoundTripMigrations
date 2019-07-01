@@ -10,6 +10,8 @@
  */
 package com.enfore.n4js.n4idl.roundtrip;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -79,8 +81,14 @@ public class RoundTripRunner extends NodeRunner {
 
 	}
 
+	// round-trip runner specific environment variables
+	private static final String ROUND_TRIP_MODULE_KEY = "ROUND_TRIP_MODULE";
+	private static final String ROUND_TRIP_CLASS_NAME_KEY = "ROUND_TRIP_CLASS_NAME";
+	
+	private static final String ROUND_TRIP_RUNNER_PROJECT = "com.enfore.n4js.n4idl.roundtrip";
+	
 	/** Runtime path of the run.js module to execute round-trip migrations. */
-	private static final String ROUND_TRIP_RUNNER_RT_PATH = "com.enfore.n4js.n4idl.roundtrip/src-gen/com/enfore/n4js/n4idl/roundtrip/run";
+	private static final String ROUND_TRIP_RUNNER_RT_PATH = "src-gen/com/enfore/n4js/n4idl/roundtrip/run";
 
 	/** key in the $executionData dictionary that specifies the user selection. */
 	private static final String EXECUTION_DATA_USER_SELECTION_KEY = "userSelection";
@@ -107,30 +115,18 @@ public class RoundTripRunner extends NodeRunner {
 	}
 
 	@Override
-	public RunConfiguration createConfiguration() {
-		return new RoundTripRunConfiguration();
-	}
-	
-	@Override
-	public void prepareConfiguration(RunConfiguration config) {
-		// first make sure that the options are of the correct type.
-		if (!(config instanceof RoundTripRunConfiguration)) {
-			LOGGER.error("Cannot process malformed NodeRunOptions.");
-			throw new IllegalArgumentException("NodeRunOptions must be subclass of RoundTripRunOptions");
-		}
-		final RoundTripRunConfiguration rtConfig = (RoundTripRunConfiguration) config;
-		
+	public void prepareConfiguration(RunConfiguration config) {		
 		// determine the exported name of the class in the module, that implements the contract interface
-		final String roundTripClassName = findContractInterfaceClass(rtConfig.getUserSelection());
+		final String roundTripClassName = findContractInterfaceClass(config.getUserSelection());
 
 		if (null == roundTripClassName) {
 			LOGGER.error("Failed to determine " + RoundTripRunnerConstants.RUNNER_CONTRACT_INTERFACE + 
-					" implementing class name for module " + rtConfig.getUserSelection());
+					" implementing class name for module " + config.getUserSelection());
 			return;
 		}
 		
-		Map<String, Object> data = rtConfig.getExecutionData();
-		final String originalUserSelection = getTargetFileName(rtConfig.getUserSelection());
+		Map<String, Object> data = config.getExecutionData();
+		final String originalUserSelection = getTargetFileName(config.getUserSelection());
 		
 		if (null == originalUserSelection) {
 			LOGGER.error("Failed to extract userSelection from executionData.");
@@ -139,9 +135,27 @@ public class RoundTripRunner extends NodeRunner {
 		
 		data.put(EXECUTION_DATA_USER_SELECTION_KEY, ROUND_TRIP_RUNNER_RT_PATH);
 
-		rtConfig.setExecutionData(data);
-		rtConfig.setRoundTripModule(originalUserSelection);
-		rtConfig.setRoundTripClassName(roundTripClassName);
+		
+		IN4JSProject runnerProject = n4jsCore.findAllProjectMappings().get(ROUND_TRIP_RUNNER_PROJECT);
+		if (null == runnerProject) {
+			LOGGER.error("Failed to find round-trip runner project.");
+			return;
+		}
+
+		// switch file-to-run for run.js file in runner project
+		config.setFileToRun(new File(runnerProject.getLocationPath() + "/" + ROUND_TRIP_RUNNER_RT_PATH).toPath());
+		// add runner script project to path
+		config.addAdditionalPath(runnerProject.getLocationPath().toString());
+		
+		// pass round-trip runner specific parameters as environment variables
+		Map<String, String> env = new HashMap<String, String>();
+		env.putAll(config.getEnvironmentVariables());
+		env.put(ROUND_TRIP_MODULE_KEY, originalUserSelection);
+		env.put(ROUND_TRIP_CLASS_NAME_KEY, roundTripClassName);
+		
+		config.setEnvironmentVariables(env);
+		
+		config.setExecutionData(data);
 	}
 	
 	private String getTargetFileName(URI uri) {
