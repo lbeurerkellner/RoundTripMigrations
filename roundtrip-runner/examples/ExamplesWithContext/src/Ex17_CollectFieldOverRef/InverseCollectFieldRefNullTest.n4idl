@@ -1,0 +1,29 @@
+import {CollectField} from "Ex17_CollectFieldOverRef/CollectField";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class InverseCollectFieldRefNullTest 
+	extends FunctionContextRoundTripTest<CollectField#2, CollectField#1> {
+	
+	@Override
+	public instantiateOriginal() : CollectField#2 {
+		const cf = new CollectField#2();
+		cf.field = "someValue";
+		cf.reference = null;
+		return cf;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: CollectField#1) {
+		Assert.isNotNull(migrated.reference);
+		Assert.equal(migrated.reference.someOtherField, "someOtherDefaultValue");
+		Assert.equal(migrated.reference.field, "someValue");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: CollectField#2) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

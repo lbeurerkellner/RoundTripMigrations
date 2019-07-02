@@ -1,0 +1,50 @@
+import {GeneralizeAttributeArray} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {Element} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {GeneralizeAttributeArrayTest} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArrayTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse GeneralizeAttributeArray.
+ * 
+ * GeneralizeAttributeArray#2 -> GeneralizeAttributeArray#1 -> GeneralizeAttributeArray#2
+ * 
+ * Inverse round-trip of {@link GeneralizeAttributeArrayTest}.
+ * 
+ * All elements but the first of the original field 'field' are dismissed
+ * after a roundtrip migration. This already happens without any change in version 1.
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeArrayTest extends InverseRoundTrip<GeneralizeAttributeArray#1, GeneralizeAttributeArray#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<GeneralizeAttributeArray#1, GeneralizeAttributeArray#2> {
+		return new GeneralizeAttributeArrayTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#2 {
+		return new GeneralizeAttributeArray#2({
+			field: [
+				new Element#2({value: "First"}),
+				new Element#2({value: "Second"}),
+				new Element#2({value: "Third"})
+			]
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeArray#2) {
+		Assert.equal(roundTrip.field.length, 1, "The 'field' of the round-trip instance only has a single element.");
+		Assert.equal(roundTrip.field[0].value, "First", "The first element of the original 'field' was retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeArray#1) {
+		Assert.equal(migrated.field.value, "First", "The first element of the original value of 'field' is migrated to the migrated instance.");
+	}
+}

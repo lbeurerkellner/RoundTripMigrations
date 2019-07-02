@@ -1,0 +1,24 @@
+import {SpecializeSuperType} from "Ex10_SpecializeSuperType/SpecializeSuperType";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class SpecializeSuperTypeTest 
+	extends FunctionContextRoundTripTest<SpecializeSuperType#1, SpecializeSuperType#2> {
+
+	@Override
+	public instantiateOriginal() : SpecializeSuperType#1 {
+		return new SpecializeSuperType#1();
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: SpecializeSuperType#2) {
+		Assert.equal(migrated.superField, "defaultValue");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: SpecializeSuperType#1) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

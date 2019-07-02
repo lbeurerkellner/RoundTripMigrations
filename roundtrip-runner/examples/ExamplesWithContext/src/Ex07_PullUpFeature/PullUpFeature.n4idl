@@ -1,0 +1,32 @@
+// @section v1
+export public class SuperClass#1 {}
+export public class PullUpFeature#1 extends SuperClass {
+	public f : string
+}
+
+// @section v2
+export public class SuperClass#2 {
+	public f : string
+}
+export public class PullUpFeature#2 extends SuperClass {}
+
+// @section migrations
+@Migration
+export public function migratePullUpFeature(o1 : PullUpFeature#1) : PullUpFeature#2 {
+	const o2 = new PullUpFeature#2();
+	
+	// simple copy the value of 'f'
+	o2.f = o1.f;
+	
+	return o2;
+}
+
+@Migration
+export public function migrateBackPullUpFeature(o2 : PullUpFeature#2) : PullUpFeature#1 {
+	const o1 = new PullUpFeature#1();
+	
+	// simple copy the value of 'f'
+	o1.f = o2.f;
+	
+	return o1;
+}

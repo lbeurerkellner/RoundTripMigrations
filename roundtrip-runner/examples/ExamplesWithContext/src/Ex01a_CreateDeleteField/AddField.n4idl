@@ -1,0 +1,51 @@
+// @section v1
+export public class AddField#1 {
+	public field1 : string
+}
+
+// @section v2
+export public class AddField#2 {
+	public field1 : string
+	public field2 : string
+}
+
+// @section migrations
+@Migration
+export public function migrate(o1 : AddField#1) : AddField#2 {
+	// obtain previous revision
+	const previousRevision = context.getTrace(o1)[0] as AddField#2 || {} as AddField#2;
+	
+	// instantiate an empty instance
+	let o2 = new AddField#2();
+	
+	// transfer value for field 'field1'
+	o2.field1 = o1.field1;
+	// use previous value or a default value alternatively 
+	o2.field2 = previousRevision.field2 || "defaultValue2";
+	
+	return o2;
+}
+
+@Migration
+export public function migrateBack(o2 : AddField#2) : AddField#1 {
+	let o1 = new AddField#1();
+	// transfer field value for 'field1'
+	o1.field1 = o2.field1;
+	
+	return o1;
+}
+
+// @endsection
+
+/**
+ * An example of a model independent migration to set a field
+ * to the value to be found using traces or alternatively a default value.
+ */
+@VersionAware
+function setFieldOriginalOrDefault(from : N4Object+,
+	migrated : N4Object+, 
+	field : string, defaultValue : any, 
+	context : MigrationContext) {
+	const previousRevision : Object+ = context.getTrace(migrated)[0] as Object;
+	migrated[field] = previousRevision[field] || defaultValue;
+}

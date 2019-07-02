@@ -1,0 +1,10 @@
+export public class FieldOptional#1 {
+	public field : string
+
+	constructor(@Spec spec : ~i~this) {}
+}
+export public class FieldOptional#2 {
+	public field? : string
+
+	constructor(@Spec spec : ~i~this) {}
+}

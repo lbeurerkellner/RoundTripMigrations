@@ -1,0 +1,37 @@
+import {FieldType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttributeType";
+import {GeneralizeFieldType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttributeType";
+import {ModifyingFunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/ModifyingFunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class GeneralizeAttributeTypeTest extends 
+	ModifyingFunctionContextRoundTripTest<GeneralizeFieldType#1, GeneralizeFieldType#2> {
+
+	@Override
+	public instantiateOriginal() : GeneralizeFieldType#1 {
+		let o1 = new GeneralizeFieldType#1();
+	
+		o1.field = new FieldType#1();
+		o1.field.generic = "genericValue";
+		o1.field.specific = "specificValue";	
+		
+		return o1;
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : GeneralizeFieldType#2) {
+		(migrated.field as FieldType#2).specific = "modified";
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: GeneralizeFieldType#2) {
+		Assert.isInstanceOf(migrated.field, FieldType#2, "The more specific type of 'field' is retained in the migrated instance.");
+		Assert.deepEqual(migrated.field, this.instantiateOriginal().field, "'field' is fully retained in the migrated instance.");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: GeneralizeFieldType#1) {
+		Assert.isInstanceOf(roundTrip.field, FieldType#1, "The more specific type of 'field' is retained to maintain the modification in the migrated instance.")
+		Assert.equal(roundTrip.field.specific, "modified", "The modification of field 'field.specific' is maintained.")
+	}
+}

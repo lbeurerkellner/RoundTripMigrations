@@ -1,0 +1,33 @@
+import {Course} from "Ex19_AggregateTypeIntoValue/AggregateTypeIntoValue";
+import {Exam} from "Ex19_AggregateTypeIntoValue/AggregateTypeIntoValue";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class AggregateTypeIntoValueTest 
+	extends FunctionContextRoundTripTest<Course#1, Course#2> {
+	
+	@Override
+	public instantiateOriginal() : Course#1 {
+		const course = new Course#1();
+		
+		course.exams = [ new Exam#1(), new Exam#1(), new Exam#1()]
+		course.exams[0].mark = 1.0;
+		course.exams[1].mark = 1.5;
+		course.exams[2].mark = 2.0;
+		
+		return course;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: Course#2) {
+		Assert.equal(migrated.averageMark, 1.5);
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: Course#1) {
+		Assert.equal(roundTrip.exams.length, 1);
+		Assert.equal(roundTrip.exams[0].mark, 1.5);
+	}
+}

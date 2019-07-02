@@ -1,0 +1,53 @@
+import {ExtractAbstractSuperClass} from "Ex12_ExtractAbstractSuperClass/ExtractAbstractSuperClass";
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * ExtractAbstractSuperClass
+ * 
+ * ExtractAbstractSuperClass#1 -> ExtractAbstractSuperClass#2 -> ExtractAbstractSuperClass#1
+ * 
+ * Very similar to 'Extract Super Class' only that the metamodel change in this
+ * example is a refactoring. There cannot be instances of AbstractSuperClass
+ * due to it being abstract.
+ */
+@VersionAware
+export public class ExtractAbstractSuperClassTest extends AbstractRoundTripTest<ExtractAbstractSuperClass#1, ExtractAbstractSuperClass#2> {
+	
+	@Override
+	public instantiateOriginal() : ExtractAbstractSuperClass#1 {
+		return new ExtractAbstractSuperClass#1({
+			specificField: "specificFieldValue",
+			genericField: "genericFieldValue"
+		});
+	}
+	
+	@Override
+	public migrate(o1 : ExtractAbstractSuperClass#1) : ExtractAbstractSuperClass#2 {
+		return new ExtractAbstractSuperClass#2({
+			specificField: o1.specificField,
+			genericField: o1.genericField
+		});
+	}
+
+	@Override
+	public migrateBack(o2 : ExtractAbstractSuperClass#2) : ExtractAbstractSuperClass#1 {
+		return new ExtractAbstractSuperClass#1({
+			specificField: o2.specificField,
+			genericField: o2.genericField
+		});
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : ExtractAbstractSuperClass#1) {
+		Assert.equal(roundTrip.specificField, "specificFieldValue", "The original value of 'specificField' was retained in the round-trip instance.");
+		Assert.equal(roundTrip.genericField, "genericFieldValue", "The original value of 'genericField' was retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : ExtractAbstractSuperClass#2) {
+		Assert.equal(migrated.specificField, "specificFieldValue", "The original value of 'specificField' was retained in the migrated instance.");
+		Assert.equal(migrated.genericField, "genericFieldValue", "The original value of 'genericField' was retained in the migrated instance.");
+	}
+}
+	

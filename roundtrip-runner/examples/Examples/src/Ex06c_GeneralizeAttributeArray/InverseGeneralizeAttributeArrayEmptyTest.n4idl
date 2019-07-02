@@ -1,0 +1,39 @@
+import {GeneralizeAttributeArray} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {InverseGeneralizeAttributeArrayTest} from "Ex06c_GeneralizeAttributeArray/InverseGeneralizeAttributeArrayTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse GeneralizeAttributeArray.
+ * 
+ * GeneralizeAttributeArray#2 -> GeneralizeAttributeArray#1 -> GeneralizeAttributeArray#2
+ * 
+ * Inverse round-trip of {@link GeneralizeAttributeArrayTest}.
+ * 
+ * Similar to the InverseGeneralizeAttributeArrayTest scenario, but the original value of 'field'
+ * is an empty array. Thus, the migration chooses a default-value when migrating.
+ * 
+ * The default value will be preserved when migrating back to version 2, 
+ * thus without any change in version 1 the state/fields of the object was/were changed.
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeArrayEmptyTest extends InverseGeneralizeAttributeArrayTest {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#2 {
+		return new GeneralizeAttributeArray#2({
+			field: []
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeArray#2) {
+		Assert.equal(roundTrip.field.length, 1, "The round-trip instance has a single element for 'field'.");
+		Assert.equal(roundTrip.field[0].value, "defaultValue", "The value of the single element in the round-trip instance is the default value.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeArray#1) {
+		Assert.equal(migrated.field.value, "defaultValue", "The value of 'field' in the migrated instance was set to a default value.");
+	}
+}

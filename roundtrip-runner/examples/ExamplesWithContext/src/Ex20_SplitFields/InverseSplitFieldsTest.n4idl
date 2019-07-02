@@ -1,0 +1,32 @@
+import {SplitFields} from "Ex20_SplitFields/SplitFields";
+import {Y} from "Ex20_SplitFields/SplitFields";
+import {Z} from "Ex20_SplitFields/SplitFields";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+
+@VersionAware
+export public class SplitFieldsTest 
+	extends FunctionContextRoundTripTest<SplitFields#2, SplitFields#1> {
+	
+	@Override
+	public instantiateOriginal() : SplitFields#2 {
+		const sf = new SplitFields#2();
+		sf.y = new Y#2();
+		sf.y.a = "valueA";
+		sf.z = new Z#2();
+		sf.z.b = "valueB";
+		return sf;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: SplitFields#1) {
+		Assert.equal(migrated.x.a, "valueA");
+		Assert.equal(migrated.x.b, "valueB");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip: SplitFields#2) {
+		Assert.deepEqual(this.instantiateOriginal(), roundTrip);
+	}
+}

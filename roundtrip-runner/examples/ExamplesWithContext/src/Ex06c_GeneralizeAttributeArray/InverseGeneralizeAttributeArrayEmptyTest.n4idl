@@ -1,0 +1,39 @@
+import {GeneralizeAttributeArray} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * #2 -> #1 -> #2
+ * 
+ * In this scenario, the initial value of 'field' in #2 is empty.
+ * 
+ * For now this test fails since modification detection has not yet been implemented.
+ * 
+ * Thus a default value is chosen in #1.
+ * 
+ * When migrating back, this default value can currently not be detected.
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeArrayEmptyTest 
+	extends FunctionContextRoundTripTest<GeneralizeAttributeArray#2, GeneralizeAttributeArray#1> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#2 {
+		let o2 = new GeneralizeAttributeArray#2();
+	
+		// original instance has an empty array as value
+		o2.field = [];
+		
+		return o2;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeArray#1) {
+		Assert.equal(migrated.field.value, "defaultValue", "The migrated 'field' has been set to a default value.");
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeArray#2) {
+		Assert.equal(roundTrip.field.length, 0, "The round-trip instance has an empty array as value for 'field'.");
+	}
+}

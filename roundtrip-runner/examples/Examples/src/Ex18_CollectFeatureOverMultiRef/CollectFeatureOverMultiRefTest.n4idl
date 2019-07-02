@@ -1,0 +1,89 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {
+	CollectFeatureOverMultiRef,
+	SourceClass,
+	Element
+} from "Ex18_CollectFeatureOverMultiRef/CollectFeatureOverMultiRef";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * CollectFeatureOverMultiRef
+ * 
+ * CollectFeatureOverMultiRef#1 -> CollectFeatureOverMultiRef#2 -> CollectFeatureOverMultiRef#1
+ * 
+ * Similar to 'Collect/Move Feature over Reference' but with a reference multiplicity of 0..n (array).
+ * 
+ * This implementation of the migration 2->1 is only one example
+ * of a possible solution.
+ * 
+ * The number of required SourceClass#1 instances is estimated 
+ * using the number of elements in SourceClass#2.fieldValues.
+ * 
+ * Thus, a deleted value in o2.fieldValues results in the deletion of 
+ * a SourceClass#1 instance. However, assuming SourceClass#1 has other fields
+ * that remain unchanged, it becomes clear, that it is also possible to construct
+ * a scenario in which the back-migration must choose default values for SourceClass#1.field.
+ * 
+ * A whole different issue with this metamodel change is, that it remains unclear how
+ * the elements of SourceClass#2.fieldValues correspond to the different SourceClass#1
+ * instance. Thus, even if the back-migration additionally considers the original SourceClass#1
+ * instance, it is  
+ */
+@VersionAware
+export public class CollectFeatureOverMultiRefTest extends AbstractRoundTripTest<CollectFeatureOverMultiRef#1, CollectFeatureOverMultiRef#2> {
+	
+	@Override
+	public instantiateOriginal() : CollectFeatureOverMultiRef#1 {
+		return new CollectFeatureOverMultiRef#1({
+			references: [
+				new SourceClass#1({
+					field: new Element#1({
+						value: "value1"
+					})
+				}),
+				new SourceClass#1({
+					field: new Element#1({
+						value: "value2"
+					})
+				})
+			]
+		})
+	}
+	
+	@Override
+	public migrate(o1 : CollectFeatureOverMultiRef#1) : CollectFeatureOverMultiRef#2 {
+		return new CollectFeatureOverMultiRef#2({
+			references: o1.references
+				.map(s => new SourceClass#2()),
+			fieldValues: o1.references
+				.map(s => s.field) 
+		})
+	}
+
+	@Override
+	public migrateBack(o2 : CollectFeatureOverMultiRef#2) : CollectFeatureOverMultiRef#1 {
+		let fieldValues = o2.fieldValues;
+		
+		return new CollectFeatureOverMultiRef#1({
+			references: fieldValues
+				.map(v => new SourceClass#1({
+					field: v
+				}))
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : CollectFeatureOverMultiRef#1) {
+		Assert.equal(roundTrip.references.length, 2, "The number of references in the round-trip graph is the same as in the original instance.");
+		Assert.equal(roundTrip.references[0].field.value, "value1", "'references[0].field.value' has the original value in the round-trip instance.");
+		Assert.equal(roundTrip.references[1].field.value, "value2", "'references[0].field.value' has the original value in the round-trip instance.");	
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : CollectFeatureOverMultiRef#2) {
+		Assert.equal(migrated.fieldValues.length, 2, "The references were collected into two elements of 'fieldValues' in the migrated instance.");
+		Assert.equal(migrated.fieldValues[0].value, "value1", "The actual value of references[0].field.value is retained by the migration.");
+		Assert.equal(migrated.fieldValues[1].value, "value2", "The actual value of references[1].field.value is retained by the migration.");
+	}
+}
+	

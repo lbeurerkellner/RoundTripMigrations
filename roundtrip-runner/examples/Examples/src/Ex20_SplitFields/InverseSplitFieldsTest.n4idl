@@ -1,0 +1,49 @@
+import {SplitFields} from "Ex20_SplitFields/SplitFields";
+import {Y, Z} from "Ex20_SplitFields/SplitFields";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {SplitFieldsTest} from "Ex20_SplitFields/SplitFieldsTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse SplitFields.
+ * 
+ * SplitFields#2 -> SplitFields#1 -> SplitFields#2
+ * 
+ * Inverse round-trip of {@link SplitFieldsTest}.
+ */
+@VersionAware
+export public class InverseSplitFieldsTest extends InverseRoundTrip<SplitFields#1, SplitFields#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<SplitFields#1, SplitFields#2> {
+		return new SplitFieldsTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : SplitFields#2 {
+		return new SplitFields#2({
+			y: new Y#2({
+				a: "aValue"
+			}),
+			z : new Z#2({
+				b: "bValue"
+			})
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : SplitFields#2) {
+		Assert.equal(roundTrip.y.a, "aValue", "The field 'y.a' has the original value in the round-trip instance.");
+		Assert.equal(roundTrip.z.b, "bValue", "The field 'z.b' has the original value in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : SplitFields#1) {
+		Assert.equal(migrated.x.a, "aValue", "The field 'x.a' has the original value in the migrated instance.");
+		Assert.equal(migrated.x.b, "bValue", "The field 'x.b' has the original value in the migrated instance.");
+	}
+}

@@ -1,0 +1,17 @@
+export public class Exam#1 {
+	public mark : number
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class Course#1 {
+	public exams : Array<Exam>
+
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class Course#2 {
+	public averageMark : number
+
+	constructor(@Spec spec : ~i~this) {}
+}

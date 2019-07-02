@@ -1,0 +1,76 @@
+import {
+	CollectFeatureOverMultiRef,
+	Element
+} from "Ex18_CollectFeatureOverMultiRef/CollectFeatureOverMultiRef";
+
+import {InverseRoundTrip} from "com/enfore/n4js/n4idl/roundtrip/InverseRoundTrip";
+
+import {RoundTripMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripMigration";
+import {CollectFeatureOverMultiRefTest} from "Ex18_CollectFeatureOverMultiRef/CollectFeatureOverMultiRefTest"
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * 
+ * Inverse CollectFeatureOverMultiRef.
+ * 
+ * CollectFeatureOverMultiRef#2 -> CollectFeatureOverMultiRef#1 -> CollectFeatureOverMultiRef#2
+ * 
+ * Inverse round-trip of {@link CollectFeatureOverMultiRefTest}.
+ * 
+ * In the original object-graph, the list of references is empty,
+ * while the list of field-values contains 3 elements. Thus, after
+ * performing a roundtrip migration, 3 new instances of SourceClass#2
+ * exist in version 2.
+ * 
+ * While in this case, we could simply implement migrations such that the instances
+ * of SourceClass#2 are not created, as they do not contain any further information.
+ * In other cases however, it is imaginable, that SourceClass has other fields. Thus,
+ * we would end up with 3 default-initialized instances of SourceClass
+ * referenced by our root instance of CollectFeatureOverMultiRef#2. 
+ * 
+ * This is potentially undesired behavior, as in no place an explicit modification of our
+ * object graph has taken place.
+ */
+@VersionAware
+export public class InverseCollectFeatureOverMultiRefTest extends InverseRoundTrip<CollectFeatureOverMultiRef#1, CollectFeatureOverMultiRef#2> {
+	
+	@Override
+	public getRoundTripMigration() : RoundTripMigration<CollectFeatureOverMultiRef#1, CollectFeatureOverMultiRef#2> {
+		return new CollectFeatureOverMultiRefTest();
+	}
+	
+	@Override
+	public instantiateOriginal() : CollectFeatureOverMultiRef#2 {
+		return new CollectFeatureOverMultiRef#2({
+			references: [],
+			fieldValues: [
+				new Element#2({
+					value: "A"
+				}),
+				new Element#2({
+					value: "B"
+				}),
+				new Element#2({
+					value: "C"
+				})
+				]
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : CollectFeatureOverMultiRef#2) {
+		Assert.equal(roundTrip.fieldValues.length, 3, "All original 'fieldValue' elements are retained in the round-trip instance.");
+		Assert.equal(roundTrip.references.length, 3, "The round-trip instance has three obsolete instances for 'references'.");
+		Assert.equal(roundTrip.fieldValues[0].value, "A", "The value of 'fieldValues[0].value' was retained in the round-trip instance.");
+		Assert.equal(roundTrip.fieldValues[1].value, "B", "The value of 'fieldValues[1].value' was retained in the round-trip instance.");
+		Assert.equal(roundTrip.fieldValues[2].value, "C", "The value of 'fieldValues[2].value' was retained in the round-trip instance.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : CollectFeatureOverMultiRef#1) {
+		Assert.equal(migrated.references.length, 3, "The migrated instance has three corresponding elements for field 'references'.");
+		Assert.equal(migrated.references[0].field.value, "A", "The value of 'references[0].field.value' was migrated correctly.");
+		Assert.equal(migrated.references[1].field.value, "B", "The value of 'references[1].field.value' was migrated correctly.");
+		Assert.equal(migrated.references[2].field.value, "C", "The value of 'references[2].field.value' was migrated correctly.");
+	}
+}

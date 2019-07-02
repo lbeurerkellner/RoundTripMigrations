@@ -1,0 +1,24 @@
+export public class SuperAttributeType#1 {
+	public general : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class AttributeType#1 extends SuperAttributeType {
+	public specific : string 
+	
+	constructor(@Spec spec : ~i~this) {
+		super(spec);
+	}
+}
+
+export public class GeneralizeAttribute#1 {
+	public field : AttributeType
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+export public class GeneralizeAttribute#2 {
+	public field : SuperAttributeType
+	
+	constructor(@Spec spec : ~i~this) {}
+}

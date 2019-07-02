@@ -1,0 +1,20 @@
+export public abstract class AbstractSuperClass#2 {
+	public genericField : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class ExtractAbstractSuperClass#1 {
+	public specificField : string
+	public genericField : string
+
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class ExtractAbstractSuperClass#2 extends AbstractSuperClass {
+	public specificField : string
+
+	constructor(@Spec spec : ~i~this) {
+		super(spec);
+	}
+}

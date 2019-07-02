@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Project
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
+    xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
+    xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
+    xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    name="roundtrip.runner"
+    label="RoundTrip Runner">
+  <setupTask
+      xsi:type="setup:InstallationTask"
+      id="installation"/>
+  <setupTask
+      xsi:type="setup.p2:P2Task">
+    <requirement
+        name="org.eclipse.oomph.setup.feature.group"/>
+    <requirement
+        name="org.eclipse.uml2.sdk.feature.group"
+        versionRange="5.2.3"/>
+    <repository
+        url="${oomph.update.url}"/>
+    <repository
+        url="http://download.eclipse.org/modeling/mdt/uml2/updates/milestones/"/>
+  </setupTask>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="git.clone.roundtrip-runner"
+      remoteURI="git@github.numberfour.eu:lbeurerkellner/round-trip-runner.git"
+      pushURI="git@github.numberfour.eu:lbeurerkellner/round-trip-runner.git">
+    <description>The RoundTrip Runner repository</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.roundtriprunner"
+      value="=https://github.numberfour.eu/raw/lbeurerkellner/round-trip-runner/master/releng/com.enfore.n4js.n4idl.roundtrip.releng/RoundTripRunner.setup->${git.clone.roundtrip-runner.location|uri}/releng/com.enfore.n4js.n4idl.roundtrip.releng/RoundTripRunner.setup"
+      vm="true">
+    <description></description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.targlets:TargletTask">
+    <targlet
+        name="RoundTrip Runner">
+      <annotation
+          source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator">
+        <detail
+            key="location">
+          <value>${git.clone.roundtrip-runner.location/releng/com.enfore.n4js.n4idl.roundtrip.releng/com.enfore.n4js.n4idl.roundtrip.target}</value>
+        </detail>
+        <detail
+            key="extraUnits">
+          <value>org.eclipse.equinox.executable.feature.group</value>
+        </detail>
+        <detail
+            key="singleLocation">
+          <value>false</value>
+        </detail>
+        <detail
+            key="includeAllPlatforms">
+          <value>false</value>
+        </detail>
+        <detail
+            key="includeSource">
+          <value>true</value>
+        </detail>
+        <detail
+            key="name">
+          <value>Generated target-platform ${scope.project.label}:${roundtrip-runner.target.platform}</value>
+        </detail>
+        <detail
+            key="generateVersions">
+          <value>true</value>
+        </detail>
+      </annotation>
+      <requirement
+          name="*"/>
+      <sourceLocator
+          rootFolder="${git.clone.roundtrip-runner.location}"
+          locateNestedProjects="true">
+        <predicate
+            xsi:type="predicates:NotPredicate">
+          <operand
+              xsi:type="predicates:LocationPredicate"
+              pattern="${git.clone.roundtrip-runner.location}/n4js/*"/>
+        </predicate>
+      </sourceLocator>
+      <repositoryList
+          name="RoundTrip Runner">
+        <repository
+            url="http://download.eclipse.org/modeling/mdt/uml2/updates/milestones/"/>
+      </repositoryList>
+    </targlet>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask">
+    <workingSet
+        name="RoundTrip Runner Plugins">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="com.enfore.n4js.n4idl.roundtrip"/>
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*/plugins/.*"/>
+      </predicate>
+    </workingSet>
+    <description>The dynamic working sets for ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:VariableTask"
+      id="roundtrip-runner.target.platform"
+      name="roundtrip-runner.target.platform"
+      value="neon"
+      defaultValue=""/>
+  <stream name="master"
+      label="Master"/>
+  <description>
+    The RoundTrip Runner can be used to
+    analyse the effects of migrations in roundtrip
+    scenarios.
+  </description>
+</setup:Project>

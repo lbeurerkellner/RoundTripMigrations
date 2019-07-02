@@ -1,0 +1,60 @@
+import {Element} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {GeneralizeAttributeArray} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArray";
+import {GeneralizeAttributeArrayTest} from "Ex06c_GeneralizeAttributeArray/GeneralizeAttributeArrayTest";
+import {RoundTripModificationMigration} from "com/enfore/n4js/n4idl/roundtrip/RoundTripModificationMigration";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * GeneralizeAttributeArray
+ * 
+ * GeneralizeAttributeArray#1 -> GeneralizeAttributeArray#2 -> GeneralizeAttributeArray#1
+ * 
+ * In version 2, two operations are performed on the migrated instances:
+ * 
+ * 1. The first element (index 0) of the array is replaced by a new element ('insertedElement').
+ * 2. A new value is appended to the end of the array ('appendedElement').
+ * 
+ * As version 1 only allows for one value of 'field', the appended value is not 
+ * visible while the insertedElement at index 0 is used as the new value field.
+ * 
+ */
+@VersionAware
+export public class GeneralizeAttributeArrayReplaceTest 
+	extends GeneralizeAttributeArrayTest 
+	implements RoundTripModificationMigration<GeneralizeAttributeArray#1, GeneralizeAttributeArray#2> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeArray#1 {
+		return new GeneralizeAttributeArray#1({
+			field: new Element#1({value: "singleElementValue"})
+		});
+	}
+	
+	@Override
+	public modifyMigratedInstance(o2 : GeneralizeAttributeArray#2
+	) {
+		// replace the first element
+		o2.field[0] = new Element#2({value: "insertedElement"});
+		// add another element to the end
+		o2.field.push(new Element#2({value: "appendedElement"}));
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeAttributeArray#1) {
+		Assert.equal(roundTrip.field.value, "insertedElement", "The 'value' of the round-trip instance was set to the value of the first replacement array element.");		
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeAttributeArray#2) {
+		Assert.equal(migrated.field.length, 1, "The 'value' of the migrated instance is an array with exactly one element.");
+		Assert.equal(migrated.field[0].value, "singleElementValue", "The first element of the migrated 'field' has the original value.");
+	}
+	
+	@Override
+	public assertModifiedMigratedInstance(modified : GeneralizeAttributeArray#2) {
+		Assert.equal(modified.field.length, 2, "The 'field' modified migrated instance is an array with two elements.");
+		Assert.equal(modified.field[0].value, "insertedElement", "The first element of the modified migrated 'field' has been replaced.");
+		Assert.equal(modified.field[1].value, "appendedElement", "Another element has been appended to the 'field' of the modified migrated instance.");
+	}
+}
+	

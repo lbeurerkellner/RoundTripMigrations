@@ -1,0 +1,23 @@
+export public class SuperClass#1 {
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class SuperClass#2 {
+	public field : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+
+export public class PullUpFeature#1 extends SuperClass {
+	public field : string
+
+	constructor(@Spec spec : ~i~this) {
+		super({});
+	}
+}
+export public class PullUpFeature#2 extends SuperClass {
+	constructor(@Spec spec : ~i~this) {
+		super(spec);
+	}
+}

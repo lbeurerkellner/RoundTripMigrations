@@ -1,0 +1,51 @@
+import {FieldType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttributeType";
+import {GeneralizeFieldType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttributeType";
+import {SuperFieldType} from "Ex06a_GeneralizeAttributeType/GeneralizeAttributeType";
+import {FunctionContextRoundTripTest} from "com/enfore/n4js/n4idl/context/FunctionContextRoundTripTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/** 
+ * GeneralizeAttributeType#2 -> GeneralizeAttributeType#1 -> GeneralizeAttributeType#2
+ * 
+ * The field 'field' is generalised in its type (changes from AttributeType#1 to SuperAttributeType#2).
+ * 
+ * When migrating back, the default value for 'field.specific' is retained, which yields a 
+ * non-equal representation after a round-trip migration.
+ * 
+ * Thus, it is desired to detect the default value for 'field.specific'. Migration may
+ * consider the previous revision using trace links, however, this information is not
+ * sufficient to determine whether 'field.specific' has been modified in #1 or not.
+ * 
+ * In case, 'field.specific' has been modified, its value needs to be represented in #2.
+ * Otherwise, the explicit storage of a default value would cause redundancy without an 
+ * explicit intent to persist the value.
+ *  
+ * 
+ */
+@VersionAware
+export public class InverseGeneralizeAttributeTypeTest 
+	extends FunctionContextRoundTripTest<GeneralizeFieldType#2, GeneralizeFieldType#1> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeFieldType#2 {
+		let o2 = new GeneralizeFieldType#2();
+	
+		o2.field = new SuperFieldType#2();
+		o2.field.generic = "genericValue";
+		
+		return o2;
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : GeneralizeFieldType#2) {
+		Assert.equal(roundTrip.field.generic, "genericValue", "'field.generic' is retained in the round-trip instance.");
+		Assert.isNotInstanceOf(roundTrip.field, FieldType#2, "'field' has not been implicitly changed to be of type AttributeType#2.");
+		Assert.isUndefined((roundTrip.field as FieldType#2).specific, "'field.specific' is undefined since field is not of type AttributeType#2.");
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : GeneralizeFieldType#1) {
+		Assert.equal(migrated.field.specific, "defaultSpecificValue", "'field.specific' has been set to a default value.");
+		Assert.equal(migrated.field.generic, "genericValue", "'field.generic' of the migrated instance has the original value.");
+	}
+}

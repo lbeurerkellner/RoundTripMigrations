@@ -1,0 +1,15 @@
+export public class Person#1 {
+	public age : int
+	public yearOfBirth : int
+
+	constructor(@Spec spec : ~i~this) {}
+}
+export public class Person#2 {
+	public yearOfBirth : int
+	
+	public get age() : int {
+		return 2018 - this.yearOfBirth;
+	}
+
+	constructor(@Spec spec : ~i~this) {}
+}

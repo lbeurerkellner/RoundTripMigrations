@@ -1,0 +1,33 @@
+import {GeneralizeAttributeOptional} from "Ex06b_GeneralizeAttributeOptional/GeneralizeAttributeOptional";
+import {ModificationMappingTest} from "com/enfore/n4js/n4idl/context/ModificationMappingTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+@VersionAware
+export public class GeneralizeAttributeOptionalTest 
+	extends ModificationMappingTest<GeneralizeAttributeOptional#1, GeneralizeAttributeOptional#2> {
+	
+	@Override
+	public instantiateOriginal() : GeneralizeAttributeOptional#1 {
+		let o1 = new GeneralizeAttributeOptional#1();
+	
+		o1.field = "someValue";
+		
+		return o1;
+	}
+	
+	@Override
+	public modifyOriginalInstance(original : GeneralizeAttributeOptional#1) {
+		// set 'field' to the default value in the original instance
+		original.field = "defaultValue";
+	}
+	
+	@Override
+	public modifyMigratedInstance(migrated : GeneralizeAttributeOptional#2) {
+		migrated.field = null;
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated: GeneralizeAttributeOptional#2) {
+		Assert.equal(migrated.field, "someValue", "'field' in the migrated instance has the original value.");
+	}
+}

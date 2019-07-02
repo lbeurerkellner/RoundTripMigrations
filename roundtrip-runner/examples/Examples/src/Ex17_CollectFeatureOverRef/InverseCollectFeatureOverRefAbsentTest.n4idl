@@ -1,0 +1,36 @@
+import {CollectFeatureOverRef, SourceClass} from "Ex17_CollectFeatureOverRef/CollectFeatureOverRef";
+import {InverseCollectFeatureOverRefTest} from "Ex17_CollectFeatureOverRef/InverseCollectFeatureOverRefTest";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/** 
+ * CollectFeatureOverRef#2 -> CollectFeatureOverRef#1 -> CollectFeatureOverRef#2
+ * 
+ * Similar to super-scenario but the initial value of 'field' is undefined/absent.
+ * 
+ */
+@VersionAware
+export public class InverseCollectFeatureOverRefAbsentTest extends InverseCollectFeatureOverRefTest {
+	
+	@Override
+	public instantiateOriginal() : CollectFeatureOverRef#2 {
+		return new CollectFeatureOverRef#2({
+			field: undefined,
+			reference: new SourceClass#2({
+				someOtherField: "someOtherValue"
+			})
+		});	
+	}
+	
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : CollectFeatureOverRef#2) {
+		Assert.equal(roundTrip.field, "defaultValue", "'field' was set to a default value in the round-trip instance.");
+		Assert.equal(roundTrip.reference.someOtherField, "someOtherValue", "The value of 'reference.someOtherValue' was retained in the round-trip instance.");	
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : CollectFeatureOverRef#1) {
+		Assert.equal(migrated.reference.field, "defaultValue", "'field' was set to a default value in the migrated instance.");
+		Assert.equal(migrated.reference.someOtherField, "someOtherValue", "'reference.someOtherField' was retained in the migrated instance.");
+	}
+}

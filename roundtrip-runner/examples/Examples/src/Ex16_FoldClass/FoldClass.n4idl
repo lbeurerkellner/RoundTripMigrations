@@ -1,0 +1,16 @@
+export public class OtherClass#1 {
+	public field : string
+	
+	constructor(@Spec spec : ~i~this) {}
+}
+
+export public class FoldClass#1 {
+	public field : string
+
+	constructor(@Spec spec : ~i~this) {}
+}
+export public class FoldClass#2 {
+	public delegate : OtherClass
+
+	constructor(@Spec spec : ~i~this) {}
+}

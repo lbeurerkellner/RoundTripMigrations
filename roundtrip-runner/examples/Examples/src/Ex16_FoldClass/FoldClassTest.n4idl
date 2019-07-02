@@ -1,0 +1,56 @@
+import {AbstractRoundTripTest} from "com/enfore/n4js/n4idl/roundtrip/AbstractRoundTripTest";
+import {
+	FoldClass,
+	OtherClass
+} from "Ex16_FoldClass/FoldClass";
+import {Assert} from "org/eclipse/n4js/mangelhaft/assert/Assert";
+
+/**
+ * FoldClass
+ * 
+ * FoldClass#1 -> FoldClass#2 -> FoldClass#1
+ * 
+ * Similar to scenario 'Extract/Inline Class', but the class in which field 'field'
+ * is folded into, already exists in version 1. As a consequence, the constraint of a
+ * containment of Ex15 relationship is obsolete in this scenario.
+ * 
+ * Fold Class: safely model-migrating, refactoring
+ * Unfold Class: safely model-migrating, refactoring
+ */
+@VersionAware
+export public class FoldClassTest extends AbstractRoundTripTest<FoldClass#1, FoldClass#2> {
+	
+	@Override
+	public instantiateOriginal() : FoldClass#1 {
+		return new FoldClass#1({
+			field: "SomeValue"
+		});
+	}
+	
+	@Override
+	public migrate(o1 : FoldClass#1) : FoldClass#2 {
+		return new FoldClass#2({
+			delegate: new OtherClass#2({
+				field: o1.field
+			})
+		})
+	}
+
+	@Override
+	public migrateBack(o2 : FoldClass#2) : FoldClass#1 {
+		return new FoldClass#1({
+			field: o2.delegate.field
+		})
+	}
+	
+	@Override
+	public assertRoundTripInstance(roundTrip : FoldClass#1) {
+		Assert.equal(roundTrip.field, "SomeValue", "The value of 'field' was retained in the round-trip instance.");	
+	}
+	
+	@Override
+	public assertMigratedInstance(migrated : FoldClass#2) {
+		Assert.equal(migrated.delegate.field, "SomeValue", "The value of 'field' was retained in the migrated instance.");
+	}
+}
+	
