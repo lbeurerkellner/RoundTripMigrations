@@ -37,6 +37,6 @@ class ObjectGraphViewerTypeTemplate extends ObjectGraphViewerTemplate{
 	 * a relative URI.
 	 */
 	static def String makeAbsoluteServerUrl(String uri) {
-		return '''https://localhost:«RoundTripRunnerConstants.DEFAULT_PORT»«uri»''';
+		return '''http://localhost:«RoundTripRunnerConstants.DEFAULT_PORT»«uri»''';
 	}
 }
