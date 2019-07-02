@@ -73,7 +73,7 @@ In order to run all tests of the catalog, right-click the project “scenario.ca
 
 <img src="img/5_run_tests.png" style="max-height: 300pt" alt="Run Tests"/>
 
-You will then see a JUnit-Runner like view executing all the tests.
+You will then see a JUnit-like view presenting test report.
 
 <img src="img/6_test_results.png" style="max-height: 250pt" alt="Scenario Test Results"/>
 
