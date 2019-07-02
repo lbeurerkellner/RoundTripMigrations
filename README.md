@@ -12,6 +12,7 @@ You need the following software to be installed on your machine:
 
 - Java 12 [Oracle Download](https://www.oracle.com/technetwork/java/javase/downloads/jdk12-downloads-5295953.html) or [OpenJDK](https://openjdk.java.net/install/))
 - Node.js (https://nodejs.org, version 12 recommended)
+- Yarn Package Manager (https://yarnpkg.com/lang/en/docs/install, version 1.16.0 recommended)
 
 Furthermore you need the Eclipse N4JS IDE for executing the migrations. Nightly builds of the IDE can be found here:
 
@@ -60,12 +61,10 @@ The scenario catalogue is given as a set of N4IDL declarations and corresponding
 
 ### Install missing dependencies
 
-You probably get some compile errors due to missing dependencies. 
-In order to resolve all dependencies, open a package.json file with errors and choose quickfix "Install all missing NPMs" (by hovering over the error message of any dependency). Alternatively you can run the tool "Install all missing" (button with two gears found in the toolbar).
+After importing the projects, you will get compiler errors due to missing dependencies. 
+In order to resolve all dependencies, open a package.json file with errors and choose quickfix "Run 'npm/yarn install' in all projects" (by hovering over the error message of any dependency). Alternatively you can run the tool "Install  missing dependencies" (button with two gears found in the toolbar).
 
-<img src="img/4_fix_dependencies.png" height="200pt" style="max-height: 300pt" alt="Select Projects"/>
-
-Installing missing dependencies and running the scenarios (next step requires Node.js).
+<img src="img/4_fix_dependencies.png" height="250pt" style="max-height: 300pt" alt="Select Projects"/>
 
 ### Run the Scenario Tests
 
