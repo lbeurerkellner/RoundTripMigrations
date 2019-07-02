@@ -26,7 +26,7 @@ Additionally you may install the plugins found in the folder "roundtrip-runner" 
 
 After launching the Eclipse IDE, go to Help/Install New Software.
 
-<img src="img/1_install_viewer.png" style="max-height: 220pt" alt="Help/Install New Software"/>
+<img src="img/1_install_viewer.png" height="200pt" style="max-height: 220pt" alt="Help/Install New Software"/>
 
 Enter a new update site:
 
@@ -36,7 +36,7 @@ https://jevopi.de/updatesite/com.enfore.n4js.n4idl.roundtrip.site/site.xml
 
 Select the Round-Trip Runner and install it.
 
-<img src="img/2_select_runner_for_installation.png" style="max-height: 150pt" alt="Select Runner"/>
+<img src="img/2_select_runner_for_installation.png" height="200pt" style="max-height: 150pt" alt="Select Runner"/>
 
 ## Import Projects
 
@@ -51,7 +51,7 @@ as the URI.
 
 Select the master branch and select all projects on the "Import Projects" wizard page.
 
-<img src="img/3_import_projects.png" style="max-height: 300pt" alt="Select Projects"/>
+<img src="img/3_import_projects.png" height="200pt" style="max-height: 300pt" alt="Select Projects"/>
 
 
 ## Run Tests
@@ -63,7 +63,7 @@ The scenario catalogue is given as a set of N4IDL declarations and corresponding
 You probably get some compile errors due to missing dependencies. 
 In order to resolve all dependencies, open a package.json file with errors and choose quickfix "Install all missing NPMs" (by hovering over the error message of any dependency). Alternatively you can run the tool "Install all missing" (button with two gears found in the toolbar).
 
-<img src="img/4_fix_dependencies.png" style="max-height: 300pt" alt="Select Projects"/>
+<img src="img/4_fix_dependencies.png" height="200pt" style="max-height: 300pt" alt="Select Projects"/>
 
 Installing missing dependencies and running the scenarios (next step requires Node.js).
 
@@ -71,26 +71,26 @@ Installing missing dependencies and running the scenarios (next step requires No
 
 In order to run all tests of the catalog, right-click the project “scenario.catalog” and select “Run As / Test in Node.js”. 
 
-<img src="img/5_run_tests.png" style="max-height: 300pt" alt="Run Tests"/>
+<img src="img/5_run_tests.png" height="200pt" style="max-height: 300pt" alt="Run Tests"/>
 
 You will then see a JUnit-Runner like view executing all the tests.
 
-<img src="img/6_test_results.png" style="max-height: 250pt" alt="Scenario Test Results"/>
+<img src="img/6_test_results.png" height="200pt" style="max-height: 250pt" alt="Scenario Test Results"/>
 
 ### Use the Round-Trip Viewer
 
 If you installed the additional round-trip migration tooling, you can also visualise round-trip migrations. In order to view the object graph including the traces and migrations, go to Window / Show View / Other and select the RoundTip Runner / Full Round Trip Object Graph.
 
-<img src="img/7_open_round_trip_viewer.png" style="max-height: 200pt" alt="Open RT Viewer"/>
+<img src="img/7_open_round_trip_viewer.png" height="200pt" style="max-height: 200pt" alt="Open RT Viewer"/>
 
 
 For any test in the `scenario.catalogue` project (i.e., an N4IDL file which file name as a suffix "Test"), use the context menu (right-click on the file) and select "Run As / Launch with N4IDL Roundtrip runner".
 
-<img src="img/8_run_with_viewer.png" style="max-height: 200pt" alt="Run with RT Viewer"/>
+<img src="img/8_run_with_viewer.png" height="200pt" style="max-height: 200pt" alt="Run with RT Viewer"/>
 
 You will then see the object graph in the viewer.
 
-<img src="img/9_view_graph.png" style="max-height: 200pt" alt="View Graph"/>
+<img src="img/9_view_graph.png" height="200pt" style="max-height: 200pt" alt="View Graph"/>
 
 # License
 
