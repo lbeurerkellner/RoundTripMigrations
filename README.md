@@ -35,6 +35,8 @@ Enter a new update site:
 https://jevopi.de/updatesite/com.enfore.n4js.n4idl.roundtrip.site/
 ```
 
+> Note: Make sure to uncheck 'Group items by category' to the the update site contents.
+
 Select the Round-Trip Runner and install it.
 
 <img src="img/2_select_runner_for_installation.png" height="200pt" style="max-height: 150pt" alt="Select Runner"/>
