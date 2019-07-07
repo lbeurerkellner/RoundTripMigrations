@@ -93,6 +93,8 @@ You will then see the object graph in the viewer.
 
 <img src="img/9_view_graph.png" height="200pt" style="max-height: 200pt" alt="View Graph"/>
 
+> For a better viewing experience, try re-arranging graph elements by dragging or adjust the viewport by panning and zooming using the mouse wheel.
+
 # License
 
 The content found in this project is made available under the Eclipse Public License 2.0.
