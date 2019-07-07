@@ -32,7 +32,7 @@ After launching the Eclipse IDE, go to Help/Install New Software.
 Enter a new update site:
 
 ```
-https://jevopi.de/updatesite/com.enfore.n4js.n4idl.roundtrip.site/site.xml
+https://jevopi.de/updatesite/com.enfore.n4js.n4idl.roundtrip.site/
 ```
 
 Select the Round-Trip Runner and install it.
