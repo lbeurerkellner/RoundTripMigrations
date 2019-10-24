@@ -4,8 +4,6 @@ The catalog of round-trip migration scenarios can be found as an anonymized tech
 
 - [catalogue-report.pdf](./catalogue-report.pdf)
 
-The thesis contains a details description of the 22 round-trip scenarios.
-
 ## Requirements
 
 You need the following software to be installed on your machine:
