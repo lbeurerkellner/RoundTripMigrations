@@ -1,4 +1,4 @@
-# Supplementary Material for the paper Towards Versioned Service APIs and Round-Trip Migration of Data Model Instances
+# Supplementary Material for the paper Managing Data Model Evolution in the Context of Web APIs
 
 The catalog of round-trip migration scenarios can be found as an anonymized techincal report here:
 
