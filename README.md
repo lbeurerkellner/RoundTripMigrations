@@ -1,8 +1,8 @@
 # Supplementary Material for the paper Towards Versioned Service APIs and Round-Trip Migration of Data Model Instances
 
-The round-trip migration catalogue was developed by Luca Beurer-Kellner as part of his bachelor thesis. It is available here:
+The catalog of round-trip migration scenarios can be found as an anonymized techincal report here:
 
-- [https://www.informatik.hu-berlin.de/de/forschung/gebiete/mse/Abschlussarbeiten/Abgeschlossen/bachelorkelner](https://www.informatik.hu-berlin.de/de/forschung/gebiete/mse/Abschlussarbeiten/Abgeschlossen/bachelorkelner)
+- [catalogue-report.pdf](./catalogue-report.pdf)
 
 The thesis contains a details description of the 22 round-trip scenarios.
 
