@@ -32,8 +32,10 @@ After launching the Eclipse IDE, go to Help/Install New Software.
 Enter a new update site:
 
 ```
-https://jevopi.de/updatesite/com.enfore.n4js.n4idl.roundtrip.site/site.xml
+https://jevopi.de/updatesite/com.enfore.n4js.n4idl.roundtrip.site/
 ```
+
+> Note: Make sure to uncheck 'Group items by category' to see the update site contents.
 
 Select the Round-Trip Runner and install it.
 
@@ -90,6 +92,8 @@ For any test in the `scenario.catalogue` project (i.e., an N4IDL file which file
 You will then see the object graph in the viewer.
 
 <img src="img/9_view_graph.png" height="200pt" style="max-height: 200pt" alt="View Graph"/>
+
+> For a better viewing experience, try re-arranging graph elements by dragging or adjust the viewport by panning and zooming using the mouse wheel.
 
 # License
 
